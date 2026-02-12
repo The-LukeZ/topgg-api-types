@@ -1,6 +1,8 @@
 // # General and Base Types
 
-// ## Enums and Constants
+import type { ISO8601Date, Snowflake } from "@src/utils";
+
+// ## Bases and Constants
 
 /**
  * The type of a webhook event sent by Top.gg to your integration webhook endpoint.
@@ -57,11 +59,11 @@ export interface User {
   /**
    * The user's Top.gg ID.
    */
-  id: string;
+  id: Snowflake;
   /**
    * The user's platform ID (e.g., Discord ID).
    */
-  platform_id: string;
+  platform_id: Snowflake;
   /**
    * The user's username.
    */
@@ -79,7 +81,7 @@ export interface BaseProject {
   /**
    * The project's Top.gg ID.
    */
-  id: string;
+  id: Snowflake;
   /**
    * The platform the project is on (e.g., "discord").
    */
@@ -87,7 +89,7 @@ export interface BaseProject {
   /**
    * The platform-specific ID of the project (e.g., Discord Bot ID).
    */
-  platform_id: string;
+  platform_id: Snowflake;
   /**
    * The type of project (e.g., "bot").
    */
@@ -101,11 +103,11 @@ export interface Vote {
   /**
    * The Top.gg ID of the user who voted.
    */
-  user_id: string;
+  user_id: Snowflake;
   /**
    * The user's ID on the project's platform (e.g., Discord ID).
    */
-  platform_id: string;
+  platform_id: Snowflake;
   /**
    * The amount of votes this vote counted for.
    */
@@ -113,12 +115,12 @@ export interface Vote {
   /**
    * The timestamp of when the user voted.
    */
-  created_at: string;
+  created_at: ISO8601Date;
   /**
    * The timestamp of when the vote expires (i.e., when the user can vote again).
    * This is typically 12 hours after the `created_at` timestamp, but may vary based on the user's voting history and other factors.
    */
-  expires_at: string;
+  expires_at: ISO8601Date;
 }
 
 /**
@@ -134,9 +136,7 @@ export interface WebhookPayloadBase<T extends WebhookEventTypes, Data extends ob
   data: Data;
 }
 
-// # Specific Types
-
-// ## Integration Types
+// # Integration Types
 
 /**
  * Data included when an integration connection is created.
@@ -208,7 +208,7 @@ export type IntegrationDeleteWebhookPayload = WebhookPayloadBase<
   IntegrationDeleteData
 >;
 
-// ## Vote Types
+// # Votes
 
 /**
  * Data included when a vote is created.
@@ -250,7 +250,7 @@ export interface WebhookTestData {
  */
 export type WebhookTestWebhookPayload = WebhookPayloadBase<"webhook.test", WebhookTestData>;
 
-// ## Project Types
+// # Projects
 
 /**
  * Response for getting the authenticated project.
@@ -359,11 +359,11 @@ export interface GetVoteStatusByUserResponse {
   /**
    * The timestamp of when the user last voted.
    */
-  created_at: string;
+  created_at: ISO8601Date;
   /**
    * The timestamp of when the user's vote expires (i.e., when they can vote again).
    */
-  expires_at: string;
+  expires_at: ISO8601Date;
   /**
    * The amount of votes this vote counted for.
    */
