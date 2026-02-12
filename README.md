@@ -56,11 +56,12 @@ try {
 
 The validators are written with zod/mini, which is a lightweight version of Zod that provides basic validation functionality with a smaller bundle size.
 
-## Available Versions
+## Available Exports
 
 - `topgg-api-types/v1` - Version 1 types (current)
 - `topgg-api-types/v1/validators` - Version 1 Zod validators
-- `topgg-api-types/v0` - Version 0 types (legacy)
+- `topgg-api-types/v0` - Version 0 types
+- `topgg-api-types/v0/validators` - Version 0 Zod validators
 
 ## Why Two Approaches?
 
