@@ -3,11 +3,9 @@
 // ## Enums and Constants
 
 /**
- * The type of a webhook event. This is used to identify the type of the event that is being delivered to your webhook endpoint.
- *
- * Not all webhook events are allowed to be set by an integration - use the `IntegrationSupportedWebhookScopes` type to find out which events you can subscribe to as an integration.
+ * The type of a webhook event sent by Top.gg to your integration webhook endpoint.
  */
-export type WebhookEventType = "webhook.test" | "integration.create" | "integration.delete" | "vote.create";
+export type IntegrationWebhookEventType = "integration.create" | "integration.delete";
 
 /**
  * The type of a project helps top.gg synchronize features.
@@ -32,8 +30,13 @@ export type UserSource = "discord" | "topgg";
 
 /**
  * Webhook scopes that are supported for integrations.
+ *
+ * These differ from integration webhook event types - these are the events that a user or you can subscribe to for an integration connection,
+ * while the integration webhook event types are the events that are sent to your webhook endpoint when something happens with your integration connection (e.g., it's created or deleted).
  */
-export type IntegrationSupportedWebhookScopes = "webhook.test" | "vote.create";
+export type WebhookEventType = "webhook.test" | "vote.create";
+
+export type WebhookEventTypes = WebhookEventType | IntegrationWebhookEventType;
 
 /**
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
@@ -124,7 +127,7 @@ export type ProjectVote = Vote;
 /**
  * Base structure for webhook payloads.
  */
-export interface WebhookPayloadBase<T extends WebhookEventType, Data> {
+export interface WebhookPayloadBase<T extends WebhookEventTypes, Data extends object> {
   type: T;
   data: Data;
 }
@@ -182,7 +185,7 @@ export interface IntegrationCreateResponse {
    *
    * @see https://docs.top.gg/docs/API/v1/webhooks#supported-scopes
    */
-  routes: IntegrationSupportedWebhookScopes[];
+  routes: WebhookEventTypes[];
 }
 
 /**
