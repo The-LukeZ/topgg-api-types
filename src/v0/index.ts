@@ -166,3 +166,114 @@ export interface Bot {
 }
 
 // # Users
+
+/*
+| Field             | Type        | Description                                                       |
+| ----------------- | ----------- | ----------------------------------------------------------------- |
+| id                | `snowflake` | The id of the user                                                |
+| username          | `string`    | The username of the user                                          |
+| discriminator     | `string`    | The discriminator of the user                                     |
+| avatar?           | `string`    | The avatar hash of the user's avatar                              |
+| defAvatar         | `string`    | The cdn hash of the user's avatar if the user has none            |
+| bio?              | `string`    | The bio of the user                                               |
+| banner?           | `string`    | The banner image url of the user                                  |
+| social            | `object`    | The social usernames of the user                                  |
+| social.youtube?   | `string`    | The youtube channel id of the user                                |
+| social.reddit?    | `string`    | The reddit username of the user                                   |
+| social.twitter?   | `string`    | The twitter username of the user                                  |
+| social.instagram? | `string`    | The instagram username of the user                                |
+| social.github?    | `string`    | The github username of the user                                   |
+| color?            | `string`    | The custom hex color of the user (not guaranteed to be valid hex) |
+| supporter         | `boolean`   | The supporter status of the user                                  |
+| certifiedDev      | `boolean`   | The certified status of the user                                  |
+| mod               | `boolean`   | The mod status of the user                                        |
+| webMod            | `boolean`   | The website moderator status of the user                          |
+| admin             | `boolean`   | The admin status of the user                                      |
+*/
+export interface User {
+  /**
+   * The Discord ID for this user.
+   */
+  id: Snowflake;
+  /**
+   * The username of the user, not including discriminator (e.g., "wumpus").
+   */
+  username: string;
+  /**
+   * The discriminator of the user (legacy Discord feature, e.g., "0000").
+   */
+  discriminator: string;
+  /**
+   * The avatar hash of the user's avatar.
+   */
+  avatar?: string;
+  /**
+   * The cdn hash of the user's avatar if the user has none.
+   */
+  defAvatar?: string;
+  /**
+   * The bio of the user. This is a short description that the user can set on their profile. It may be empty or null if the user has not set a bio.
+   *
+   * This is NOT their in-discord bio.
+   */
+  bio?: string;
+  /**
+   * The banner image URL of the user.
+   */
+  banner?: string;
+  /**
+   * The social usernames of the user
+   */
+  social: {
+    /**
+     * The YouTube channel ID of the user. This is not the full URL, just the channel ID (e.g., "UC_x5XG1OV2P6uZZ5FSM9Ttw").
+     */
+    youtube?: string;
+    /**
+     * The Reddit username of the user (e.g., "spez"). This is not the full URL, just the username.
+     */
+    reddit?: string;
+    /**
+     * The Twitter username of the user (e.g., "jack"). This is not the full URL, just the username.
+     */
+    twitter?: string;
+    /**
+     * The Instagram username of the user (e.g., "instagram"). This is not the full URL, just the username.
+     */
+    instagram?: string;
+    /**
+     * The GitHub username of the user (e.g., "torvalds"). This is not the full URL, just the username.
+     */
+    github?: string;
+  };
+  /**
+   * The custom hex color of the user (not guaranteed to be valid hex). This is a color that the user can set on their profile.
+   */
+  color?: string;
+  /**
+   * The supporter status of the user. This is true if the user has voted for any bot in the last month.
+   *
+   * TODO: Clarify what "supporter" means in this context. It may refer to users who have voted for any bot in the last month, but this is not explicitly stated in the documentation.
+   */
+  supporter: boolean;
+  /**
+   * The certified status of the user.
+   *
+   * TODO: Clarify what "certified" means in this context. It may refer to users who are certified bot developers or top.gg staff, but this is not explicitly stated in the documentation.
+   */
+  certifiedDev: boolean;
+  /**
+   * The mod status of the user. This is true if the user is a moderator on Top.gg.
+   */
+  mod: boolean;
+  /**
+   * The website moderator status of the user. This is true if the user is a website moderator on Top.gg.
+   */
+  webMod: boolean;
+  /**
+   * The admin status of the user.
+   *
+   * TODO: Clarify what "admin" means in this context. It may refer to users who are administrators on Top.gg, but this is not explicitly stated in the documentation.
+   */
+  admin: boolean;
+}
