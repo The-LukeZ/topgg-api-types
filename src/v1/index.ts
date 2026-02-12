@@ -139,12 +139,24 @@ export const IntegrationCreateDataSchema = z.object({
   user: UserSchema,
 });
 
+/**
+ * The payload delivered to your webhook endpoint when an integration connection is created.
+ * This will be sent if a user clicks "Connect" for your integration on the dashboard.
+ *
+ * @see https://docs.top.gg/docs/API/v1/integrations#2-topgg-sends-integrationcreate
+ */
 export const IntegrationCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "integration.create",
   IntegrationCreateDataSchema
 );
 
-export const InteractionCreateResponseSchema = z.object({
+/**
+ * The response you must return from your webhook endpoint when you receive an `integration.create` event.
+ * This tells Top.gg where to deliver webhook events for this integration connection and which events to deliver.
+ *
+ * @see https://docs.top.gg/docs/API/v1/integrations#3-respond-with-configuration
+ */
+export const IntegrationCreateResponseSchema = z.object({
   /**
    * The URL where Top.gg should deliver webhook events for this connection.
    */
@@ -168,6 +180,9 @@ export const IntegrationDeleteDataSchema = z.object({
   connection_id: SnowflakeSchema,
 });
 
+/**
+ * The payload delivered to your webhook endpoint when an integration connection is deleted.
+ */
 export const IntegrationDeleteWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "integration.delete",
   IntegrationDeleteDataSchema
@@ -180,6 +195,9 @@ export const VoteCreateDataSchema = z.extend(VoteSchema, {
   user: UserSchema,
 });
 
+/**
+ * The payload delivered to your webhook endpoint when a user votes for your project and you have subscribed to the `vote.create` event.
+ */
 export const VoteCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "vote.create",
   VoteCreateDataSchema
@@ -187,30 +205,14 @@ export const VoteCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
 
 // ## Webhook Test Schemas
 
-/*
-{
-  "type": "webhook.test",
-  "data": {
-    "user": {
-      "id": "top.gg id",
-      "platform_id": "discord id",
-      "name": "username",
-      "avatar_url": "<avatar url>"
-    },
-    "project": {
-      "id": "803190510032756736",
-      "type": "bot",
-      "platform": "discord",
-      "platform_id": "160105994217586689"
-    }
-  }
-}
-*/
 export const WebhookTestDataSchema = z.object({
   user: UserSchema,
   project: BaseProjectSchema,
 });
 
+/**
+ * The payload delivered to your webhook endpoint when you send a test webhook from the dashboard or via the API.
+ */
 export const WebhookTestWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "webhook.test",
   WebhookTestDataSchema
@@ -240,7 +242,7 @@ export const GetProjectResponseSchema = z.extend(BaseProjectSchema, {
  *
  * - GET `/v1/projects/@me/votes`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#query-parameters
+ * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
  */
 export const GetProjectVotesQuerySchema = z
   .object({
@@ -266,7 +268,7 @@ export const GetProjectVotesQuerySchema = z
  *
  * - GET `/v1/projects/@me/votes`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#response-body-1
+ * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
  */
 export const GetProjectVotesResponseSchema = z.object({
   /**
@@ -290,6 +292,13 @@ export const GetVoteStatusByUserQuerySchema = z.object({
   source: z.optional(UserSourceSchema),
 });
 
+/**
+ * Response schema for the Get Vote Status By User endpoint.
+ *
+ * - GET `/v1/projects/@me/votes/:user_id`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
+ */
 export const GetVoteStatusByUserResponseSchema = z.object({
   /**
    * The timestamp of when the user last voted.

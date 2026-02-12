@@ -13,7 +13,7 @@ export type IntegrationSupportedWebhookScopes = z_infer<
 
 // # General and Base Types
 
-export type Error = z_infer<typeof v1.ErrorSchema>;
+export type ErrorResponse = z_infer<typeof v1.ErrorSchema>;
 export type User = z_infer<typeof v1.UserSchema>;
 export type BaseProject = z_infer<typeof v1.BaseProjectSchema>;
 export type Vote = z_infer<typeof v1.VoteSchema>;
@@ -25,7 +25,7 @@ export type IntegrationCreateData = z_infer<typeof v1.IntegrationCreateDataSchem
 export type IntegrationCreateWebhookPayload = z_infer<
   typeof v1.IntegrationCreateWebhookPayloadSchema
 >;
-export type InteractionCreateResponse = z_infer<typeof v1.InteractionCreateResponseSchema>;
+export type IntegrationCreateResponse = z_infer<typeof v1.IntegrationCreateResponseSchema>;
 export type IntegrationDeleteData = z_infer<typeof v1.IntegrationDeleteDataSchema>;
 export type IntegrationDeleteWebhookPayload = z_infer<
   typeof v1.IntegrationDeleteWebhookPayloadSchema
