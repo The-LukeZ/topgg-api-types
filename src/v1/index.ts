@@ -4,6 +4,8 @@
 
 /**
  * The type of a webhook event sent by Top.gg to your integration webhook endpoint.
+ *
+ * These are for events related to the integration connection itself (e.g., when it's created or deleted).
  */
 export type IntegrationWebhookEventType = "integration.create" | "integration.delete";
 
