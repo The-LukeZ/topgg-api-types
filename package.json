@@ -8,34 +8,31 @@
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
-  "description": "Top.gg API types for TypeScript",
+  "description": "Top.gg API types and validators for TypeScript",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
     },
     "./v0": {
-      "types": "./dist/v0.d.ts",
-      "import": "./dist/v0.js",
-      "require": "./dist/v0.cjs"
+      "require": "./dist/v0.cjs",
+      "import": "./dist/v0.js"
     },
     "./v1": {
-      "types": "./dist/v1.d.ts",
-      "import": "./dist/v1.js",
-      "require": "./dist/v1.cjs"
+      "require": "./dist/v1.cjs",
+      "import": "./dist/v1.js"
     },
-    "./v2": {
-      "types": "./dist/v2.d.ts",
-      "import": "./dist/v2.js",
-      "require": "./dist/v2.cjs"
-    }
+    "./v1/validators": {
+      "require": "./dist/v1/validators.cjs",
+      "import": "./dist/v1/validators.js"
+    },
+    "./package.json": "./package.json"
   },
   "keywords": [
     "topgg",

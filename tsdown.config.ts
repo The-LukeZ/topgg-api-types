@@ -7,6 +7,7 @@ export default defineConfig({
     index: "src/index.ts", // re-export latest
     v0: "src/v0/index.ts",
     v1: "src/v1/index.ts",
+    "v1/validators": "src/v1/validators.ts",
   },
   format: ["esm", "cjs"],
   dts: true,

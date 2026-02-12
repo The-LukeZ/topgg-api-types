@@ -1,13 +1,21 @@
-// # General and Base Types
+import * as z from "zod/mini";
+import { ISO8601DateSchema, SnowflakeSchema } from "@utils/validators";
+
+// # General and Base Schemas
 
 // ## Enums and Constants
 
 /**
  * The type of a webhook event. This is used to identify the type of the event that is being delivered to your webhook endpoint.
  *
- * Not all webhook events are allowed to be set by an integration - use the `IntegrationSupportedWebhookScopes` type to find out which events you can subscribe to as an integration.
+ * Not all webhook events are allowed to be set by an integration - use the `IntegrationSupportedWebhookScopesSchema` to find out which events you can subscribe to as an integration.
  */
-export type WebhookEventType = "webhook.test" | "integration.create" | "integration.delete" | "vote.create";
+export const WebhookEventTypeSchema = z.enum([
+  "webhook.test",
+  "integration.create",
+  "integration.delete",
+  "vote.create",
+]);
 
 /**
  * The type of a project helps top.gg synchronize features.
@@ -15,12 +23,12 @@ export type WebhookEventType = "webhook.test" | "integration.create" | "integrat
  *
  * You can use this to further find out the specificity of the project.
  */
-export type ProjectType = "bot" | "server" | "game";
+export const ProjectTypeSchema = z.enum(["bot", "server", "game"]);
 
 /**
  * A Platform is used to identify where the corresponding ID links towards.
  */
-export type ProjectPlatformType = "discord" | "roblox";
+export const ProjectPlatformTypeSchema = z.enum(["discord", "roblox"]);
 
 /**
  * A User Source is an enum that represents a user account from an external platform that is linked to a Top.gg user account.
@@ -28,132 +36,136 @@ export type ProjectPlatformType = "discord" | "roblox";
  *
  * If none is passed to any endpoint that accepts a source parameter, it will default to topgg.
  */
-export type UserSource = "discord" | "topgg";
+export const UserSourceSchema = z.enum(["discord", "topgg"]);
 
 /**
  * Webhook scopes that are supported for integrations.
  */
-export type IntegrationSupportedWebhookScopes = "webhook.test" | "vote.create";
+export const IntegrationSupportedWebhookScopesSchema = z.enum(["webhook.test", "vote.create"]);
 
 /**
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
  */
-export interface ErrorResponse {
-  type: string;
-  title: string;
-  status: number;
-  detail: string;
-}
+export const ErrorSchema = z.object({
+  type: z.string(),
+  title: z.string(),
+  status: z.number(),
+  detail: z.string(),
+});
 
 /**
  * Represents a user on Top.gg.
  */
-export interface User {
+export const UserSchema = z.object({
   /**
    * The user's Top.gg ID.
    */
-  id: string;
+  id: SnowflakeSchema,
   /**
    * The user's platform ID (e.g., Discord ID).
    */
-  platform_id: string;
+  platform_id: SnowflakeSchema,
   /**
    * The user's username.
    */
-  name: string;
+  name: z.string(),
   /**
    * The URL of the user's avatar.
    */
-  avatar_url: string;
-}
+  avatar_url: z.url(),
+});
 
 /**
  * Base project information shared across all project-related responses.
  */
-export interface BaseProject {
+export const BaseProjectSchema = z.object({
   /**
    * The project's Top.gg ID.
    */
-  id: string;
+  id: SnowflakeSchema,
   /**
    * The platform the project is on (e.g., "discord").
    */
-  platform: ProjectPlatformType;
+  platform: ProjectPlatformTypeSchema,
   /**
    * The platform-specific ID of the project (e.g., Discord Bot ID).
    */
-  platform_id: string;
+  platform_id: SnowflakeSchema,
   /**
    * The type of project (e.g., "bot").
    */
-  type: ProjectType;
-}
+  type: ProjectTypeSchema,
+});
 
 /**
  * Represents a vote on Top.gg.
  */
-export interface Vote {
+export const VoteSchema = z.object({
   /**
    * The Top.gg ID of the user who voted.
    */
-  user_id: string;
+  user_id: SnowflakeSchema,
   /**
    * The user's ID on the project's platform (e.g., Discord ID).
    */
-  platform_id: string;
+  platform_id: SnowflakeSchema,
   /**
    * The amount of votes this vote counted for.
    */
-  weight: number;
+  weight: z.number(),
   /**
    * The timestamp of when the user voted.
    */
-  created_at: string;
+  created_at: ISO8601DateSchema,
   /**
    * The timestamp of when the vote expires (i.e., when the user can vote again).
    * This is typically 12 hours after the `created_at` timestamp, but may vary based on the user's voting history and other factors.
    */
-  expires_at: string;
-}
+  expires_at: ISO8601DateSchema,
+});
 
 /**
  * Represents a vote for a specific project.
  */
-export type ProjectVote = Vote;
+export const ProjectVoteSchema = z.clone(VoteSchema);
 
-/**
- * Base structure for webhook payloads.
- */
-export interface WebhookPayloadBase<T extends WebhookEventType, Data> {
-  type: T;
-  data: Data;
-}
+export const WebhookPayloadBaseSchema = <
+  T extends z.infer<typeof WebhookEventTypeSchema>,
+  Data extends z.ZodMiniObject,
+>(
+  type: T,
+  data: Data
+) =>
+  z.object({
+    type: z.literal(type),
+    data: data,
+  });
 
-// # Specific Types
+// # Specific Schemas
 
-// ## Integration Types
+// ## Integration Schemas
 
 /**
  * Data included when an integration connection is created.
  */
-export interface IntegrationCreateData {
+export const IntegrationCreateDataSchema = z.object({
   /**
    * The unique identifier for this integration connection.
    */
-  connection_id: string;
+  connection_id: SnowflakeSchema,
   /**
    * The webhook secret used to verify webhook requests from Top.gg for this connection.
    */
-  webhook_secret: string;
+  webhook_secret: z.string().check(z.regex(/^whs_[a-zA-Z0-9]+$/, "Invalid webhook secret")),
   /**
    * The project this integration is connected to.
    */
-  project: BaseProject;
+  project: BaseProjectSchema,
   /**
    * The user who created this integration connection.
    */
-  user: User;
-}
+  user: UserSchema,
+});
 
 /**
  * The payload delivered to your webhook endpoint when an integration connection is created.
@@ -161,10 +173,10 @@ export interface IntegrationCreateData {
  *
  * @see https://docs.top.gg/docs/API/v1/integrations#2-topgg-sends-integrationcreate
  */
-export type IntegrationCreateWebhookPayload = WebhookPayloadBase<
+export const IntegrationCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "integration.create",
-  IntegrationCreateData
->;
+  IntegrationCreateDataSchema
+);
 
 /**
  * The response you must return from your webhook endpoint when you receive an `integration.create` event.
@@ -172,118 +184,131 @@ export type IntegrationCreateWebhookPayload = WebhookPayloadBase<
  *
  * @see https://docs.top.gg/docs/API/v1/integrations#3-respond-with-configuration
  */
-export interface IntegrationCreateResponse {
+export const IntegrationCreateResponseSchema = z.object({
   /**
    * The URL where Top.gg should deliver webhook events for this connection.
    */
-  webhook_url: string;
+  webhook_url: z.url(),
   /**
    * An array of webhook scopes to subscribe to.
    *
    * @see https://docs.top.gg/docs/API/v1/webhooks#supported-scopes
    */
-  routes: IntegrationSupportedWebhookScopes[];
-}
+  routes: z
+    .array(IntegrationSupportedWebhookScopesSchema)
+    .check(
+      z.refine(
+        (arr) => arr.length === new Set(arr).size,
+        "Duplicate webhook scopes are not allowed"
+      )
+    ),
+});
 
 /**
  * Data included when an integration connection is deleted.
  */
-export interface IntegrationDeleteData {
+export const IntegrationDeleteDataSchema = z.object({
   /**
    * The unique identifier for the integration connection that was deleted.
    */
-  connection_id: string;
-}
+  connection_id: SnowflakeSchema,
+});
 
 /**
  * The payload delivered to your webhook endpoint when an integration connection is deleted.
  */
-export type IntegrationDeleteWebhookPayload = WebhookPayloadBase<
+export const IntegrationDeleteWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "integration.delete",
-  IntegrationDeleteData
->;
+  IntegrationDeleteDataSchema
+);
 
-// ## Vote Types
+// ## Vote Schemas
 
 /**
  * Data included when a vote is created.
  */
-export interface VoteCreateData extends Vote {
+export const VoteCreateDataSchema = z.extend(VoteSchema, {
   /**
    * The project that was voted for.
    */
-  project: BaseProject;
+  project: BaseProjectSchema,
   /**
    * The user who voted.
    */
-  user: User;
-}
+  user: UserSchema,
+});
 
 /**
  * The payload delivered to your webhook endpoint when a user votes for your project and you have subscribed to the `vote.create` event.
  */
-export type VoteCreateWebhookPayload = WebhookPayloadBase<"vote.create", VoteCreateData>;
+export const VoteCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
+  "vote.create",
+  VoteCreateDataSchema
+);
 
-// ## Webhook Test Types
+// ## Webhook Test Schemas
 
 /**
  * Data included in a webhook test event.
  */
-export interface WebhookTestData {
+export const WebhookTestDataSchema = z.object({
   /**
    * A test user.
    */
-  user: User;
+  user: UserSchema,
   /**
    * A test project.
    */
-  project: BaseProject;
-}
+  project: BaseProjectSchema,
+});
 
 /**
  * The payload delivered to your webhook endpoint when you send a test webhook from the dashboard or via the API.
  */
-export type WebhookTestWebhookPayload = WebhookPayloadBase<"webhook.test", WebhookTestData>;
+export const WebhookTestWebhookPayloadSchema = WebhookPayloadBaseSchema(
+  "webhook.test",
+  WebhookTestDataSchema
+);
 
-// ## Project Types
+// ## Project Schemas
 
 /**
- * Response for getting the authenticated project.
+ * Response schema for getting the authenticated project.
  *
  * - GET `/v1/projects/@me`
  *
  * @see https://docs.top.gg/docs/API/v1/projects#get-current-project
  */
-export interface GetProjectResponse extends BaseProject {
+export const GetProjectResponseSchema = z.extend(BaseProjectSchema, {
   /**
    * The project's name.
    */
-  name: string;
+  name: z.string(),
   /**
    * The project's headline/tagline.
    */
-  headline: string;
+  headline: z.string(),
   /**
    * Tags associated with the project.
    */
-  tags: string[];
+  tags: z.array(z.string()),
   /**
    * The number of votes this month.
    */
-  votes: number;
+  votes: z.number(),
   /**
    * The total number of votes all time.
    */
-  votes_total: number;
+  votes_total: z.number(),
   /**
    * The average review score.
    */
-  review_score: number;
+  review_score: z.number(),
   /**
    * The number of reviews.
    */
-  review_count: number;
-}
+  review_count: z.number(),
+});
 
 /**
  * Query parameters for getting project votes.
@@ -294,40 +319,44 @@ export interface GetProjectResponse extends BaseProject {
  *
  * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
  */
-export interface GetProjectVotesQuery {
-  /**
-   * Pagination cursor for fetching the next page of votes. if provided, `startDate` is ignored.
-   *
-   * From the previous response.
-   */
-  cursor?: string;
-  /**
-   * The start date for fetching votes. Only votes created after this date will be returned. Required if `cursor` is not provided.
-   *
-   * Maximum 1 year in the past.
-   *
-   * ISO 8601 date string.
-   */
-  startDate?: string;
-}
+export const GetProjectVotesQuerySchema = z
+  .object({
+    /**
+     * Pagination cursor for fetching the next page of votes. if provided, `startDate` is ignored.
+     *
+     * From the previous response.
+     */
+    cursor: z.optional(z.string()),
+    /**
+     * The start date for fetching votes. Only votes created after this date will be returned. Required if `cursor` is not provided.
+     *
+     * Maximum 1 year in the past.
+     *
+     * ISO 8601 date string.
+     */
+    startDate: z.optional(ISO8601DateSchema),
+  })
+  .check(
+    z.refine((data) => data.cursor || data.startDate, "Either cursor or startDate must be provided")
+  );
 
 /**
- * Response for the Get Project Votes endpoint.
+ * Response schema for the Get Project Votes endpoint.
  *
  * - GET `/v1/projects/@me/votes`
  *
  * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
  */
-export interface GetProjectVotesResponse {
+export const GetProjectVotesResponseSchema = z.object({
   /**
    * Cursor for fetching the next page of votes.
    */
-  cursor: string;
+  cursor: z.string(),
   /**
    * An array of votes for the project.
    */
-  data: ProjectVote[];
-}
+  data: z.array(ProjectVoteSchema),
+});
 
 /**
  * Query parameters for getting vote status by user.
@@ -336,31 +365,31 @@ export interface GetProjectVotesResponse {
  *
  * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
  */
-export interface GetVoteStatusByUserQuery {
+export const GetVoteStatusByUserQuerySchema = z.object({
   /**
    * The source of the user ID. Defaults to "topgg".
    */
-  source?: UserSource;
-}
+  source: z.optional(UserSourceSchema),
+});
 
 /**
- * Response for the Get Vote Status By User endpoint.
+ * Response schema for the Get Vote Status By User endpoint.
  *
  * - GET `/v1/projects/@me/votes/:user_id`
  *
  * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
  */
-export interface GetVoteStatusByUserResponse {
+export const GetVoteStatusByUserResponseSchema = z.object({
   /**
    * The timestamp of when the user last voted.
    */
-  created_at: string;
+  created_at: ISO8601DateSchema,
   /**
    * The timestamp of when the user's vote expires (i.e., when they can vote again).
    */
-  expires_at: string;
+  expires_at: ISO8601DateSchema,
   /**
    * The amount of votes this vote counted for.
    */
-  weight: number;
-}
+  weight: z.number(),
+});
