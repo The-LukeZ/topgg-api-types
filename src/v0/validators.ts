@@ -1,174 +1,176 @@
-// TODO: https://docs.top.gg/docs/Resources/webhooks#schema
-// https://docs.top.gg/docs/API/v0/bot
-// https://docs.top.gg/docs/API/v0/user
-
-import type { ISO8601Date, Snowflake } from "@src/utils";
+import * as z from "zod/mini";
+import { ISO8601DateSchema, SnowflakeSchema } from "@utils/validators";
 
 // # Bases and Constants
 
-export type WebhookEventType = "upvote" | "test";
+/**
+ * The type of a webhook event.
+ */
+export const WebhookEventTypeSchema = z.enum(["upvote", "test"]);
 
 // # Webhooks - deprecated
 
 /**
+ * Webhook payload for bot votes (deprecated).
+ *
  * @deprecated Use `v1` types instead.
  */
-export interface BotWebhookPayload {
+export const BotWebhookPayloadSchema = z.object({
   /**
    * Discord ID of the bot that received a vote.
    */
-  bot: Snowflake;
+  bot: SnowflakeSchema,
   /**
    * Discord ID of the user that voted.
    */
-  user: Snowflake;
+  user: SnowflakeSchema,
   /**
    * The type of the vote (should always be "upvote" except when using the test button it's "test").
    */
-  type: WebhookEventType;
+  type: WebhookEventTypeSchema,
   /**
    * Whether the weekend multiplier is in effect, meaning users votes count as two.
    */
-  isWeekend: boolean;
+  isWeekend: z.boolean(),
   /**
    * Query string params found on the /bot/:ID/vote page.
    *
    * @example
    * "?a=1&b=2&c=3"
    */
-  query?: string;
-}
+  query: z.optional(z.string()),
+});
 
 /**
+ * Webhook payload for server votes (deprecated).
+ *
  * @deprecated Use `v1` types instead.
  */
-export interface ServerWebhookPayload {
+export const ServerWebhookPayloadSchema = z.object({
   /**
    * Discord ID of the server that received a vote.
    */
-  guild: Snowflake;
+  guild: SnowflakeSchema,
   /**
    * Discord ID of the user that voted.
    */
-  user: Snowflake;
+  user: SnowflakeSchema,
   /**
    * The type of the vote (should always be "upvote" except when using the test button it's "test").
    */
-  type: WebhookEventType;
+  type: WebhookEventTypeSchema,
   /**
    * Whether the weekend multiplier is in effect, meaning users votes count as two.
    */
-  query?: string;
-}
+  query: z.optional(z.string()),
+});
 
 // # Bots
 
 /**
  * A bot listed on Top.gg.
  */
-export interface Bot {
+export const BotSchema = z.object({
   /**
    * The Discord ID of the bot
    */
-  id: Snowflake;
+  id: SnowflakeSchema,
   /**
    * The username of the bot
    */
-  username: string;
+  username: z.string(),
   /**
    * The discriminator of the bot (legacy Discord feature)
    */
-  discriminator: string;
+  discriminator: z.string(),
   /**
    * The avatar hash of the bot's avatar
    */
-  avatar?: string;
+  avatar: z.optional(z.string()),
   /**
    * The cdn hash of the bot's avatar if the bot has none
    */
-  defAvatar?: string;
+  defAvatar: z.optional(z.string()),
   /**
    * The command prefix of the bot
    */
-  prefix: string;
+  prefix: z.string(),
   /**
    * The short description of the bot
    */
-  shortdesc: string;
+  shortdesc: z.string(),
   /**
    * The detailed long description of the bot
    */
-  longdesc?: string;
+  longdesc: z.optional(z.string()),
   /**
    * Array of tags associated with the bot
    */
-  tags: string[];
+  tags: z.array(z.string()),
   /**
    * The official website URL of the bot
    */
-  website?: string;
+  website: z.optional(z.string()),
   /**
    * The support server URL for the bot
    */
-  support?: string;
+  support: z.optional(z.string()),
   /**
    * The GitHub repository URL of the bot
    */
-  github?: string;
+  github: z.optional(z.string()),
   /**
    * Array of snowflake identifiers of the bot owners
    */
-  owners: Snowflake[];
+  owners: z.array(SnowflakeSchema),
   /**
    * Array of guild snowflake identifiers where the bot is present
    */
-  guilds: Snowflake[];
+  guilds: z.array(SnowflakeSchema),
   /**
    * The OAuth2 invite URL of the bot
    */
-  invite?: string;
+  invite: z.optional(z.string()),
   /**
    * The date when the bot was approved on Top.gg in ISO 8601 format
    */
-  date: ISO8601Date;
+  date: ISO8601DateSchema,
   /**
    * The amount of servers the bot has according to posted stats.
    */
-  server_count?: number;
+  server_count: z.optional(z.number()),
   /**
    * The amount of shards the bot has according to posted stats.
    */
-  shard_count?: number;
+  shard_count: z.optional(z.number()),
   /**
    * Whether the bot is certified on Top.gg
    */
-  certifiedBot: boolean;
+  certifiedBot: z.boolean(),
   /**
    * The vanity URL of the bot on Top.gg
    */
-  vanity?: string;
+  vanity: z.optional(z.string()),
   /**
    * The amount of upvotes the bot has
    */
-  points: number;
+  points: z.number(),
   /**
    * The amount of upvotes the bot has this month
    */
-  monthlyPoints: number;
+  monthlyPoints: z.number(),
   /**
    * The guild id for the donatebot setup
    */
-  donatebotguildid: Snowflake;
-}
+  donatebotguildid: SnowflakeSchema,
+});
 
 /**
  * Query parameters for searching bots on Top.gg.
  *
- * TODO: there is no documentation on a "search" parameter, but the endpoint is called "search bots" and it would make sense for there to be a search parameter. Need to confirm if this is the case and if so, add it to the types.
- *
  * @see https://docs.top.gg/docs/API/v0/bot#search-bots
  */
-export interface GetSearchBotsQuery {
+export const GetSearchBotsQuerySchema = z.object({
   /**
    * The amount of bots to return.
    *
@@ -176,250 +178,237 @@ export interface GetSearchBotsQuery {
    * @maximum 500
    * @default 50
    */
-  limit?: number;
+  limit: z.optional(z.number().check(z.minimum(1)).check(z.maximum(500))),
   /**
    * The amount of bots to skip (for pagination).
    *
    * @minimum 0
    * @default 0
    */
-  offset?: number;
+  offset: z.optional(z.number().check(z.minimum(0))),
   /**
    * The field to sort the bots by. Prefix with `-` for descending order.
    *
    * There is no documented default.
    */
-  sort: keyof Bot | `-${keyof Bot}`;
+  sort: z.string(),
   /**
    * Comma separated list of fields to include in the response. If not provided, all fields will be included.
    */
-  fields?: string;
-}
+  fields: z.optional(z.string()),
+});
 
-export interface GetSearchBotsResponse {
+/**
+ * Response for searching bots on Top.gg.
+ */
+export const GetSearchBotsResponseSchema = z.object({
   /**
    * The array of bots that match the search query.
    */
-  results: Bot[];
+  results: z.array(BotSchema),
   /**
    * The total number of bots that match the search query.
    */
-  total: number;
+  total: z.number(),
   /**
    * The limit used in the query.
    */
-  limit: number;
+  limit: z.number(),
   /**
    * The amount of bots skipped (for pagination).
    */
-  offset: number;
+  offset: z.number(),
   /**
    * The amount of items in the current page of results.
    */
-  count: number;
-}
+  count: z.number(),
+});
 
 /**
- * ### Routes
+ * Response for getting a bot.
  *
  * - GET `/bots/:bot_id`
  */
-export type GetBotResponse = Bot;
+export const GetBotResponseSchema = BotSchema;
+
+/**
+ * A bot voter.
+ */
+export const BotVoterSchema = z.object({
+  /**
+   * The Discord ID of the user that voted.
+   */
+  id: SnowflakeSchema,
+  /**
+   * The username of the user that voted, including discriminator (e.g., "wumpus#0000").
+   */
+  username: z.string(),
+  /**
+   * The avatar hash of the user that voted.
+   */
+  avatar: z.optional(z.string()),
+});
 
 /**
  * Gets the last 1000 voters for your bot.
  *
- * If your bot receives more than 1000 votes monthly you cannot use this endpoints and must use webhooks and implement your own caching instead.
- *
- * This endpoint only returns unique votes, it does not include double votes (weekend votes).
- *
- * ### Routes
- *
  * - GET `/bots/:bot_id/votes`
  */
-export type GetLast1000BotVotesResponse = {
-  /**
-   * The Discord ID of the user that voted.
-   */
-  id: Snowflake;
-  /**
-   * The username of the user that voted, including discriminator (e.g., "wumpus#0000").
-   *
-   * TODO: It's called "username" but can be uppsercase?? It would be the global_name then.
-   */
-  username: string;
-  /**
-   * The avatar hash of the user that voted.
-   *
-   * TODO: Can be null? Can be undefined? Is it always present? Need to confirm.
-   */
-  avatar?: string;
-}[];
+export const GetLast1000BotVotesResponseSchema = z.array(BotVoterSchema);
 
 /**
  * Specific stats about a bot.
  *
- * ### Routes
- *
  * - GET `/bots/:bot_id/stats`
  */
-export interface GetBotStatsResponse {
+export const GetBotStatsResponseSchema = z.object({
   /**
    * The amount of servers the bot is in
    */
-  server_count?: number;
+  server_count: z.optional(z.number()),
   /**
    * The amount of servers the bot is in per shard. Always present but can be empty.
    */
-  shards: number[];
+  shards: z.array(z.number()),
   /**
    * The amount of shards a bot has according to posted stats.
    */
-  shard_count?: number;
-}
+  shard_count: z.optional(z.number()),
+});
 
 /**
- * Checking whether or not a user has voted for your bot. Safe to use even if you have over 1k monthly votes.
- *
- * ### Routes
+ * Query parameters for checking whether or not a user has voted for your bot.
  *
  * - GET `/bots/:bot_id/check`
  */
-export interface GetUserVoteCheckQuery {
+export const GetUserVoteCheckQuerySchema = z.object({
   /**
    * The Discord ID of the user to check for a vote.
    */
-  userId: Snowflake;
-}
+  userId: SnowflakeSchema,
+});
 
 /**
- * The response from checking whether or not a user has voted for your bot.
- *
- * ### Routes
+ * Response for checking whether or not a user has voted for your bot.
  *
  * - GET `/bots/:bot_id/check`
  */
-export interface GetUserVoteCheckResponse {
+export const GetUserVoteCheckResponseSchema = z.object({
   /**
    * 0 if the user has not voted for this bot in the last 12 hours, 1 if they have.
    */
-  voted: 0 | 1;
-}
+  voted: z.xor([z.literal(0), z.literal(1)]),
+});
 
-export interface PostBotStatsBody {
+/**
+ * Request body for posting bot stats.
+ */
+export const PostBotStatsBodySchema = z.object({
   /**
    * The amount of servers the bot is in. Required if the bot has less than 100 servers, otherwise optional but recommended.
    *
    * If an Array, it acts like shards.
    */
-  server_count: number | number[];
+  server_count: z.xor([z.number(), z.array(z.number())]),
   /**
    * Amount of servers the bot is in per shard.
    */
-  shards?: number[];
+  shards: z.optional(z.array(z.number())),
   /**
    * The zero-indexed id of the shard posting. Makes server_count set the shard specific server count.
    */
-  shard_id?: number;
+  shard_id: z.optional(z.number()),
   /**
    * The amount of shards the bot has.
    */
-  shard_count?: number;
-}
+  shard_count: z.optional(z.number()),
+});
 
 // # Users
 
 /**
- * A user on Top.gg
- *
- * ### Routes
+ * A user on Top.gg.
  *
  * - GET `/users/:user_id`
  */
-export interface User {
+export const UserSchema = z.object({
   /**
    * The Discord ID for this user.
    */
-  id: Snowflake;
+  id: SnowflakeSchema,
   /**
    * The username of the user, not including discriminator (e.g., "wumpus").
    */
-  username: string;
+  username: z.string(),
   /**
    * The discriminator of the user (legacy Discord feature, e.g., "0000").
    */
-  discriminator: string;
+  discriminator: z.string(),
   /**
    * The avatar hash of the user's avatar.
    */
-  avatar?: string;
+  avatar: z.optional(z.string()),
   /**
    * The cdn hash of the user's avatar if the user has none.
    */
-  defAvatar?: string;
+  defAvatar: z.optional(z.string()),
   /**
    * The bio of the user. This is a short description that the user can set on their profile. It may be empty or null if the user has not set a bio.
    *
    * This is NOT their in-discord bio.
    */
-  bio?: string;
+  bio: z.optional(z.string()),
   /**
    * The banner image URL of the user.
    */
-  banner?: string;
+  banner: z.optional(z.string()),
   /**
    * The social usernames of the user
    */
-  social: {
+  social: z.object({
     /**
      * The YouTube channel ID of the user. This is not the full URL, just the channel ID (e.g., "UC_x5XG1OV2P6uZZ5FSM9Ttw").
      */
-    youtube?: string;
+    youtube: z.optional(z.string()),
     /**
      * The Reddit username of the user (e.g., "spez"). This is not the full URL, just the username.
      */
-    reddit?: string;
+    reddit: z.optional(z.string()),
     /**
      * The Twitter username of the user (e.g., "jack"). This is not the full URL, just the username.
      */
-    twitter?: string;
+    twitter: z.optional(z.string()),
     /**
      * The Instagram username of the user (e.g., "instagram"). This is not the full URL, just the username.
      */
-    instagram?: string;
+    instagram: z.optional(z.string()),
     /**
      * The GitHub username of the user (e.g., "torvalds"). This is not the full URL, just the username.
      */
-    github?: string;
-  };
+    github: z.optional(z.string()),
+  }),
   /**
    * The custom hex color of the user (not guaranteed to be valid hex). This is a color that the user can set on their profile.
    */
-  color?: string;
+  color: z.optional(z.string()),
   /**
    * The supporter status of the user. This is true if the user has voted for any bot in the last month.
-   *
-   * TODO: Clarify what "supporter" means in this context. It may refer to users who have voted for any bot in the last month, but this is not explicitly stated in the documentation.
    */
-  supporter: boolean;
+  supporter: z.boolean(),
   /**
    * The certified status of the user.
-   *
-   * TODO: Clarify what "certified" means in this context. It may refer to users who are certified bot developers or top.gg staff, but this is not explicitly stated in the documentation.
    */
-  certifiedDev: boolean;
+  certifiedDev: z.boolean(),
   /**
    * The mod status of the user. This is true if the user is a moderator on Top.gg.
    */
-  mod: boolean;
+  mod: z.boolean(),
   /**
    * The website moderator status of the user. This is true if the user is a website moderator on Top.gg.
    */
-  webMod: boolean;
+  webMod: z.boolean(),
   /**
    * The admin status of the user.
-   *
-   * TODO: Clarify what "admin" means in this context. It may refer to users who are administrators on Top.gg, but this is not explicitly stated in the documentation.
    */
-  admin: boolean;
-}
+  admin: z.boolean(),
+});

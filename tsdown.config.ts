@@ -8,6 +8,7 @@ export default defineConfig({
     v0: "src/v0/index.ts",
     v1: "src/v1/index.ts",
     "v1/validators": "src/v1/validators.ts",
+    "v0/validators": "src/v0/validators.ts",
   },
   format: ["esm", "cjs"],
   dts: true,
