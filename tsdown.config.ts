@@ -14,6 +14,9 @@ export default defineConfig({
   platform: "neutral",
   alias: {
     "@src": "./src",
+    "@utils": "./src/utils",
+    "@v0": "./src/v0",
+    "@v1": "./src/v1",
   },
   sourcemap: true,
 });
