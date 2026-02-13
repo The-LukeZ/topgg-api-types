@@ -215,6 +215,10 @@ export type IntegrationDeleteWebhookPayload = WebhookPayloadBase<
  */
 export interface VoteCreateData extends Vote {
   /**
+   * The unique identifier for this vote.
+   */
+  id: Snowflake;
+  /**
    * The project that was voted for.
    */
   project: BaseProject;
