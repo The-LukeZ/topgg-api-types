@@ -9,6 +9,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "description": "Top.gg API types and validators for TypeScript",
+  "repository": {
+    "url": "https://github.com/The-LukeZ/topgg-api-types"
+  },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.cts",
