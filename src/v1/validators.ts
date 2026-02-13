@@ -247,7 +247,7 @@ export const VoteCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
   VoteCreateDataSchema
 );
 
-// ## Webhook Test Schemas
+// ## Webhook Test Schema
 
 /**
  * Data included in a webhook test event.
@@ -270,6 +270,15 @@ export const WebhookTestWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "webhook.test",
   WebhookTestDataSchema
 );
+
+// ## Webhook
+
+export const WebhookPayloadSchema = z.discriminatedUnion("type", [
+  IntegrationCreateWebhookPayloadSchema,
+  IntegrationDeleteWebhookPayloadSchema,
+  VoteCreateWebhookPayloadSchema,
+  WebhookTestWebhookPayloadSchema,
+]);
 
 // ## Project Schemas
 

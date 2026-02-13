@@ -250,6 +250,14 @@ export interface WebhookTestData {
  */
 export type WebhookTestWebhookPayload = WebhookPayloadBase<"webhook.test", WebhookTestData>;
 
+export type WebhookPayload<T extends WebhookEventTypes = WebhookEventTypes> = Extract<
+  | IntegrationCreateWebhookPayload
+  | IntegrationDeleteWebhookPayload
+  | VoteCreateWebhookPayload
+  | WebhookTestWebhookPayload,
+  { type: T }
+>;
+
 // # Projects
 
 /**
