@@ -27,6 +27,10 @@
       "require": "./dist/v0.cjs",
       "import": "./dist/v0.js"
     },
+    "./v0/validators": {
+      "require": "./dist/v0/validators.cjs",
+      "import": "./dist/v0/validators.js"
+    },
     "./v1": {
       "require": "./dist/v1.cjs",
       "import": "./dist/v1.js"
