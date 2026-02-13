@@ -6,7 +6,7 @@
     "url": "https://github.com/The-LukeZ"
   },
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "MIT",
   "description": "Top.gg API types and validators for TypeScript",
   "repository": {
