@@ -187,7 +187,7 @@ export interface IntegrationCreateResponse {
    *
    * @see https://docs.top.gg/docs/API/v1/webhooks#supported-scopes
    */
-  routes: WebhookEventTypes[];
+  routes: WebhookEventType[];
 }
 
 /**

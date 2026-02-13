@@ -11,11 +11,9 @@ export * from "@utils/validators";
  *
  * Not all webhook events are allowed to be set by an integration - use the `IntegrationSupportedWebhookScopesSchema` to find out which events you can subscribe to as an integration.
  */
-export const WebhookEventTypeSchema = z.enum([
-  "webhook.test",
+export const IntegrationWebhookEventTypeSchema = z.enum([
   "integration.create",
   "integration.delete",
-  "vote.create",
 ]);
 
 /**
@@ -42,7 +40,12 @@ export const UserSourceSchema = z.enum(["discord", "topgg"]);
 /**
  * Webhook scopes that are supported for integrations.
  */
-export const IntegrationSupportedWebhookScopesSchema = z.enum(["webhook.test", "vote.create"]);
+export const WebhookEventTypeSchema = z.enum(["webhook.test", "vote.create"]);
+
+export const WebhookEventTypesSchema = z.union([
+  WebhookEventTypeSchema,
+  IntegrationWebhookEventTypeSchema,
+]);
 
 /**
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
@@ -131,7 +134,7 @@ export const VoteSchema = z.object({
 export const ProjectVoteSchema = z.clone(VoteSchema);
 
 export const WebhookPayloadBaseSchema = <
-  T extends z.infer<typeof WebhookEventTypeSchema>,
+  T extends z.infer<typeof WebhookEventTypesSchema>,
   Data extends z.ZodMiniObject,
 >(
   type: T,
@@ -196,7 +199,7 @@ export const IntegrationCreateResponseSchema = z.object({
    * @see https://docs.top.gg/docs/API/v1/webhooks#supported-scopes
    */
   routes: z
-    .array(IntegrationSupportedWebhookScopesSchema)
+    .array(IntegrationWebhookEventTypeSchema)
     .check(
       z.refine(
         (arr) => arr.length === new Set(arr).size,
