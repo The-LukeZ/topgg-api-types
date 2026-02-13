@@ -48,6 +48,9 @@
     "api"
   ],
   "scripts": {
+    "v:minor": "pnpm version minor -m \"Bump version to %s\"",
+    "v:patch": "pnpm version patch -m \"Bump version to %s\"",
+    "v:major": "pnpm version major -m \"Bump version to %s\"",
     "prepublishOnly": "pnpm run build",
     "build": "tsdown",
     "dev": "tsdown --watch",
