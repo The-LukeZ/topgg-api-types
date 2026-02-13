@@ -1,7 +1,3 @@
-// TODO: https://docs.top.gg/docs/Resources/webhooks#schema
-// https://docs.top.gg/docs/API/v0/bot
-// https://docs.top.gg/docs/API/v0/user
-
 import type { ISO8601Date, Snowflake } from "@src/utils";
 
 // # Bases and Constants
@@ -11,6 +7,7 @@ export type WebhookEventType = "upvote" | "test";
 // # Webhooks - deprecated
 
 /**
+ * @see https://docs.top.gg/docs/Resources/webhooks#bot-webhooks
  * @deprecated Use `v1` types instead.
  */
 export interface BotWebhookPayload {
@@ -40,6 +37,7 @@ export interface BotWebhookPayload {
 }
 
 /**
+ * @see https://docs.top.gg/docs/Resources/webhooks#server-webhooks
  * @deprecated Use `v1` types instead.
  */
 export interface ServerWebhookPayload {
