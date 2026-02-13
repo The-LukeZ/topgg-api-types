@@ -48,6 +48,7 @@
     "api"
   ],
   "scripts": {
+    "push-with-tags": "git push && git push --tags",
     "v:patch": "pnpm version patch -m \"Bump version to %s\"",
     "v:minor": "pnpm version minor -m \"Bump version to %s\"",
     "v:major": "pnpm version major -m \"Bump version to %s\"",
