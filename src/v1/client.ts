@@ -6,6 +6,7 @@ import type {
   GetProjectVotesResponse,
   GetVoteStatusByUserQuery,
   GetVoteStatusByUserResponse,
+  ProjectVote,
   UpdateProjectBody,
   UpdateProjectCommandsBody,
   UpdateProjectMetricsBatchBody,
@@ -23,6 +24,25 @@ import { Routes } from "@v1/routes";
 
 export { TopGGAPIError };
 export { Routes };
+
+/**
+ * A page of project votes, with a `next()` method for fetching the following page.
+ * `cursor` is always present, even on the last page — stop paging once `data` comes back empty.
+ */
+export interface PaginatedProjectVotes {
+  /**
+   * The votes in this page.
+   */
+  data: ProjectVote[];
+  /**
+   * Opaque cursor for fetching the next page.
+   */
+  cursor: string;
+  /**
+   * Fetches the next page of votes using `cursor`.
+   */
+  next(): Promise<PaginatedProjectVotes>;
+}
 
 export interface TopGGClientOptions {
   /**
@@ -98,8 +118,10 @@ export class TopGGClient {
 
   /**
    * - GET `/v1/projects/@me/votes`
+   *
+   * Returns a page of votes along with a `next()` method for fetching the following page via its cursor.
    */
-  async getProjectVotes(query: GetProjectVotesQuery): Promise<GetProjectVotesResponse> {
+  async getProjectVotes(query: GetProjectVotesQuery): Promise<PaginatedProjectVotes> {
     const qs = buildQueryString({ cursor: query.cursor, startDate: query.startDate });
     const data = await performRequest<GetProjectVotesResponse>({
       baseUrl: this.#baseUrl,
@@ -109,7 +131,12 @@ export class TopGGClient {
       fetchImpl: this.#fetch,
     });
     if (this.#validateResponses) GetProjectVotesResponseSchema.parse(data);
-    return data as GetProjectVotesResponse;
+    const page = data as GetProjectVotesResponse;
+    return {
+      data: page.data,
+      cursor: page.cursor,
+      next: () => this.getProjectVotes({ cursor: page.cursor }),
+    };
   }
 
   /**
