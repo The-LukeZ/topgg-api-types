@@ -14,10 +14,11 @@ Package manager is **pnpm**. Per user global config, do not run pnpm/npm/bun com
 - `pnpm run dev` — tsdown in watch mode
 - `pnpm run format` — prettier write
 - `pnpm run lint` — prettier check (this is the only lint step; no test suite exists)
-- `pnpm run v:patch` / `v:minor` / `v:major` — bump version via `pnpm version`, commits with "Bump version to %s"
-- `pnpm run push-with-tags` — `git push && git push --tags`
+- `pnpm changeset` — record a changeset for the current change (bump type + summary); required on every PR that changes published code, see `RELEASING.md`
 
 There are no automated tests. "Testing changes" means: build succeeds and types/schemas match the real Top.gg API shape.
+
+Versioning/publishing is handled by Changesets (see `RELEASING.md`) — don't hand-bump `package.json` version or publish manually.
 
 ## Architecture
 

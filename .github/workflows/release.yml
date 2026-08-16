@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # to create git tags and GitHub Releases
+  pull-requests: write # to open and update the "Version Packages" PR
+  id-token: write # for npm provenance / OIDC trusted publishing
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Fetch full history so Changesets can diff against previous tags
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/setup@v2
+        with:
+          runtime: node@24
+          cache: true
+          install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Create release PR or publish to npm
+        uses: changesets/action@v2
+        with:
+          publish-script: pnpm changeset publish
+          version-script: pnpm changeset version
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages"
+          create-github-releases: true

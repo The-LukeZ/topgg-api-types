@@ -64,10 +64,9 @@
     "api"
   ],
   "scripts": {
-    "push-with-tags": "git push && git push --tags",
-    "v:patch": "pnpm version patch -m \"Bump version to %s\"",
-    "v:minor": "pnpm version minor -m \"Bump version to %s\"",
-    "v:major": "pnpm version major -m \"Bump version to %s\"",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish",
     "prepublishOnly": "pnpm run build",
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -75,6 +74,7 @@
     "lint": "prettier --check ."
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.1",
     "prettier": "3.9.6",
     "tsdown": "^0.22.14",
     "typescript": "^7.0.2"

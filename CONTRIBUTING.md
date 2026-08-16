@@ -32,6 +32,10 @@ Thank you for your interest in contributing! Here are some guidelines to help yo
 - **Utils**: If something is needed in both v0 and v1, add it to the `utils` directory and import it where needed.
 - **Imports**: Use path aliases defined in `tsconfig.json` / `tsdown.config.ts` for cleaner imports (e.g., `import { Bot } from '@types'` instead of relative paths).
 
+### Changesets
+
+Every PR that changes published code must include a changeset: run `pnpm changeset`, pick a bump type, write a short summary, and commit the generated `.changeset/*.md` file with your changes. See [RELEASING.md](./RELEASING.md) for the full release process.
+
 ## Submitting Changes
 
 1. Push your branch to your fork
