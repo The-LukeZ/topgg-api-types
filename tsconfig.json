@@ -12,8 +12,8 @@
     "lib": ["ES2022"],
 
     // Path Aliases (matching your tsdown.config.ts)
-    "baseUrl": ".",
     "paths": {
+      "*": ["./*"],
       "@src/*": ["./src/*"],
       "@utils/*": ["./src/utils/*"],
       "@v0/*": ["./src/v0/*"],
