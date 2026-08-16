@@ -1,5 +1,8 @@
 # topgg-api-types
 
+[![npm version](https://badgen.net/npm/v/topgg-api-types)](https://www.npmjs.com/package/topgg-api-types)
+[![License](https://badgen.net/badge/license/MIT/blue?4)](https://www.npmjs.com/package/@the-lukez/li18n)
+
 A lightweight collection of TypeScript types and runtime validators for the Top.gg API.
 This package provides type definitions for the various endpoints and data structures used in the Top.gg API,
 making it easier for developers to work with the API in a type-safe manner.
