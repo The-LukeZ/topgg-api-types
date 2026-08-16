@@ -9,7 +9,7 @@
 
     // Target & Lib
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
 
     // Path Aliases (matching your tsdown.config.ts)
     "paths": {

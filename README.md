@@ -58,16 +58,56 @@ try {
 
 The validators are written with zod/mini, which is a lightweight version of Zod that provides basic validation functionality with a smaller bundle size.
 
+### REST Client
+
+For a thin, ready-to-use HTTP client on top of native `fetch` (no dependencies), import from the `client` subpath:
+
+```ts
+import { TopGGClient } from "topgg-api-types/v1/client";
+
+const client = new TopGGClient({ token: process.env.TOPGG_TOKEN! });
+
+const project = await client.getProject();
+const status = await client.getVoteStatus("1234567890"); // null if user hasn't voted
+await client.updateMetrics({ server_count: 1234 });
+```
+
+Pass `validateResponses: true` to validate responses against this package's own zod/mini schemas before returning them:
+
+```ts
+const client = new TopGGClient({ token, validateResponses: true });
+```
+
+Non-2xx responses throw `TopGGAPIError` (`status`, `type`, `title`, `detail`, and `retryAfter` when the API sends a `Retry-After` header). `getVoteStatus` is the one exception — a 404 there resolves to `null` instead of throwing, since that's the documented "user hasn't voted" response.
+
+For the deprecated legacy API, use `TopGGLegacyClient` from `topgg-api-types/v0/client` — same shape, but the `Authorization` header is sent raw (no `Bearer` prefix), matching the v0 API.
+
+### Routes
+
+Both client subpaths also export a `Routes` object — a mapping of functions that build the relative REST path for each endpoint, in the same style as `discord-api-types`' `Routes`. Useful if you want to make requests yourself without pulling in the full client:
+
+```ts
+import { Routes } from "topgg-api-types/v1/routes";
+
+Routes.project(); // "/projects/@me"
+Routes.projectVoteStatus("1234567890"); // "/projects/@me/votes/1234567890"
+```
+
 ## Available Exports
 
 - `topgg-api-types/v1` - Version 1 types (current)
 - `topgg-api-types/v1/validators` - Version 1 Zod validators
+- `topgg-api-types/v1/client` - Version 1 REST client (`TopGGClient`) and `Routes`
+- `topgg-api-types/v1/routes` - Version 1 `Routes` path builders (standalone, no client)
 - `topgg-api-types/v0` - Version 0 types
 - `topgg-api-types/v0/validators` - Version 0 Zod validators
+- `topgg-api-types/v0/client` - Version 0 REST client (`TopGGLegacyClient`, deprecated) and `Routes`
+- `topgg-api-types/v0/routes` - Version 0 `Routes` path builders (standalone, no client)
 
 ## Why Two Approaches?
 
 - **Types only**: Smaller bundle size, better IntelliSense, no runtime overhead - perfect for most users
 - **Validators**: Runtime validation with Zod - use when you need to validate API responses or webhook payloads
+- **Client**: Skip writing your own fetch wrapper - use when you want a ready-made REST client with auth, error handling, and optional validation built in
 
 Choose the approach that fits your needs, or use both together!

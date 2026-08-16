@@ -27,6 +27,14 @@
       "import": "./dist/v0.js",
       "require": "./dist/v0.cjs"
     },
+    "./v0/client": {
+      "import": "./dist/v0/client.js",
+      "require": "./dist/v0/client.cjs"
+    },
+    "./v0/routes": {
+      "import": "./dist/v0/routes.js",
+      "require": "./dist/v0/routes.cjs"
+    },
     "./v0/validators": {
       "import": "./dist/v0/validators.js",
       "require": "./dist/v0/validators.cjs"
@@ -34,6 +42,14 @@
     "./v1": {
       "import": "./dist/v1.js",
       "require": "./dist/v1.cjs"
+    },
+    "./v1/client": {
+      "import": "./dist/v1/client.js",
+      "require": "./dist/v1/client.cjs"
+    },
+    "./v1/routes": {
+      "import": "./dist/v1/routes.js",
+      "require": "./dist/v1/routes.cjs"
     },
     "./v1/validators": {
       "import": "./dist/v1/validators.js",
