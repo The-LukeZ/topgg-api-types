@@ -1,6 +1,7 @@
 // # General and Base Types
 
 import type { ISO8601Date, Snowflake } from "@src/utils";
+import type { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
 
 // ## Bases and Constants
 
@@ -41,6 +42,27 @@ export type UserSource = "discord" | "topgg";
 export type WebhookEventType = "webhook.test" | "vote.create";
 
 export type WebhookEventTypes = WebhookEventType | IntegrationWebhookEventType;
+
+/**
+ * A locale supported for translated project fields (e.g., `headline`, `page_content`).
+ */
+export type Locale =
+  | "en"
+  | "de"
+  | "fr"
+  | "pt"
+  | "tr"
+  | "hi"
+  | "ja"
+  | "ar"
+  | "nl"
+  | "ko"
+  | "it"
+  | "es"
+  | "ru"
+  | "uk"
+  | "vi"
+  | "zh";
 
 /**
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
@@ -381,3 +403,191 @@ export interface GetVoteStatusByUserResponse {
    */
   weight: number;
 }
+
+// # Project Management
+
+/**
+ * Request body for updating the authenticated project's headline and/or page content.
+ * At least one of `headline` or `page_content` must be provided.
+ *
+ * - PATCH `/v1/projects/@me`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-project
+ */
+export interface UpdateProjectBody {
+  /**
+   * Locale-keyed headline/tagline strings.
+   *
+   * @minimum 3
+   * @maximum 140
+   */
+  headline?: Partial<Record<Locale, string>>;
+  /**
+   * Locale-keyed page content in Markdown.
+   *
+   * @minimum 300
+   * @maximum 50000
+   */
+  page_content?: Partial<Record<Locale, string>>;
+}
+
+/**
+ * The category of a project announcement.
+ */
+export type AnnouncementCategory = "announcement" | "event" | "new_feature";
+
+/**
+ * Request body for creating a project announcement.
+ *
+ * - POST `/v1/projects/@me/announcements`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ */
+export interface CreateProjectAnnouncementBody {
+  /**
+   * The announcement title.
+   *
+   * @minimum 3
+   * @maximum 100
+   */
+  title: string;
+  /**
+   * The announcement content.
+   *
+   * @minimum 10
+   * @maximum 2000
+   */
+  content: string;
+  /**
+   * The announcement category. Defaults to "announcement".
+   */
+  category?: AnnouncementCategory;
+}
+
+/**
+ * Response for creating a project announcement.
+ *
+ * - POST `/v1/projects/@me/announcements`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ */
+export interface CreateProjectAnnouncementResponse {
+  /**
+   * The announcement title.
+   */
+  title: string;
+  /**
+   * The announcement content.
+   */
+  content: string;
+  /**
+   * The timestamp of when the announcement was created.
+   */
+  created_at: ISO8601Date;
+}
+
+/**
+ * Metrics payload for a Discord bot project.
+ * At least one of `server_count` or `shard_count` must be provided.
+ */
+export interface DiscordBotMetrics {
+  /**
+   * The amount of servers the bot is in.
+   *
+   * @minimum 0
+   */
+  server_count?: number;
+  /**
+   * The amount of shards the bot has.
+   *
+   * @minimum 0
+   */
+  shard_count?: number;
+}
+
+/**
+ * Metrics payload for a Discord server project.
+ * At least one of `member_count` or `online_count` must be provided.
+ * `online_count` cannot exceed `member_count` when both are provided.
+ */
+export interface DiscordServerMetrics {
+  /**
+   * The amount of members in the server.
+   *
+   * @minimum 0
+   */
+  member_count?: number;
+  /**
+   * The amount of online members in the server.
+   *
+   * @minimum 0
+   */
+  online_count?: number;
+}
+
+/**
+ * Metrics payload for a Roblox game project.
+ */
+export interface RobloxGameMetrics {
+  /**
+   * The amount of players currently in the game.
+   *
+   * @minimum 0
+   */
+  player_count: number;
+}
+
+/**
+ * Request body for updating the authenticated project's current metrics.
+ * The shape used must match the project's own `platform`/`type` combination -
+ * the API does not accept a discriminant field to disambiguate.
+ *
+ * - PATCH `/v1/projects/@me/metrics`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-metrics
+ */
+export type UpdateProjectMetricsBody = DiscordBotMetrics | DiscordServerMetrics | RobloxGameMetrics;
+
+/**
+ * A single entry in a metrics batch submission.
+ */
+export interface ProjectMetricsBatchEntry {
+  /**
+   * The metrics payload for this entry. Must match the project's `platform`/`type`.
+   */
+  metrics: UpdateProjectMetricsBody;
+  /**
+   * The timestamp this entry applies to, for backfilling. Cannot exceed 5 minutes in the future.
+   * Entries without a timestamp are applied first, in request order; timestamped entries are
+   * applied afterward, in chronological order.
+   */
+  timestamp?: ISO8601Date;
+}
+
+/**
+ * Request body for submitting up to 100 metrics entries in a single batch.
+ *
+ * - POST `/v1/projects/@me/metrics/batch`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-metrics-batch
+ */
+export interface UpdateProjectMetricsBatchBody {
+  /**
+   * The metrics entries to submit.
+   *
+   * @minimum 1
+   * @maximum 100
+   */
+  data: ProjectMetricsBatchEntry[];
+}
+
+/**
+ * Request body for overwriting the authenticated Discord bot project's slash commands.
+ * Only applicable to projects with `platform: "discord"` and `type: "bot"`.
+ * Pass an empty array to clear all commands.
+ *
+ * - PUT `/v1/projects/@me/commands`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-commands
+ */
+export type UpdateProjectCommandsBody = RESTPostAPIApplicationCommandsJSONBody[];

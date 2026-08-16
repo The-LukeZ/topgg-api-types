@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      discord-api-types:
+        specifier: ^0.38.53
+        version: 0.38.53
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -491,6 +494,9 @@ packages:
   defu@6.1.7:
     resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
 
+  discord-api-types@0.38.53:
+    resolution: {integrity: sha512-HL1zz/UuZ+bbJjA/X8Kbxx9gk8v9rJAbTeWRNYKmIdjwJ7EovjlHgoJTxcLpATfNJ+AonOtMdy3Y5MVIJAAd/A==}
+
   dts-resolver@3.0.0:
     resolution: {integrity: sha512-1T1f+z+4tl9XD+m+0HBgWoL/nm0bOIffyWaUuUSBlFg/86IWvfx+wjNaO/ybU0AJzG9/Mi5hBUgGV6zCmWEN7Q==}
     engines: {node: ^22.18.0 || >=24.0.0}
@@ -921,6 +927,8 @@ snapshots:
   cac@7.0.0: {}
 
   defu@6.1.7: {}
+
+  discord-api-types@0.38.53: {}
 
   dts-resolver@3.0.0: {}
 

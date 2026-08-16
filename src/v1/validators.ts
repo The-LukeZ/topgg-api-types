@@ -48,6 +48,28 @@ export const WebhookEventTypesSchema = z.union([
 ]);
 
 /**
+ * A locale supported for translated project fields (e.g., `headline`, `page_content`).
+ */
+export const LocaleSchema = z.enum([
+  "en",
+  "de",
+  "fr",
+  "pt",
+  "tr",
+  "hi",
+  "ja",
+  "ar",
+  "nl",
+  "ko",
+  "it",
+  "es",
+  "ru",
+  "uk",
+  "vi",
+  "zh",
+]);
+
+/**
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
  */
 export const ErrorSchema = z.object({
@@ -406,3 +428,215 @@ export const GetVoteStatusByUserResponseSchema = z.object({
    */
   weight: z.number(),
 });
+
+// ## Project Management Schemas
+
+/**
+ * Request body for updating the authenticated project's headline and/or page content.
+ * At least one of `headline` or `page_content` must be provided.
+ *
+ * - PATCH `/v1/projects/@me`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-project
+ */
+export const UpdateProjectBodySchema = z
+  .object({
+    /**
+     * Locale-keyed headline/tagline strings.
+     */
+    headline: z.optional(
+      z.partialRecord(LocaleSchema, z.string().check(z.minLength(3), z.maxLength(140)))
+    ),
+    /**
+     * Locale-keyed page content in Markdown.
+     */
+    page_content: z.optional(
+      z.partialRecord(LocaleSchema, z.string().check(z.minLength(300), z.maxLength(50000)))
+    ),
+  })
+  .check(
+    z.refine(
+      (data) => Boolean(data.headline) || Boolean(data.page_content),
+      "Either headline or page_content must be provided"
+    )
+  );
+
+/**
+ * The category of a project announcement.
+ */
+export const AnnouncementCategorySchema = z.enum(["announcement", "event", "new_feature"]);
+
+/**
+ * Request body for creating a project announcement.
+ *
+ * - POST `/v1/projects/@me/announcements`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ */
+export const CreateProjectAnnouncementBodySchema = z.object({
+  /**
+   * The announcement title.
+   */
+  title: z.string().check(z.minLength(3), z.maxLength(100)),
+  /**
+   * The announcement content.
+   */
+  content: z.string().check(z.minLength(10), z.maxLength(2000)),
+  /**
+   * The announcement category. Defaults to "announcement".
+   */
+  category: z.optional(AnnouncementCategorySchema),
+});
+
+/**
+ * Response for creating a project announcement.
+ *
+ * - POST `/v1/projects/@me/announcements`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ */
+export const CreateProjectAnnouncementResponseSchema = z.object({
+  /**
+   * The announcement title.
+   */
+  title: z.string(),
+  /**
+   * The announcement content.
+   */
+  content: z.string(),
+  /**
+   * The timestamp of when the announcement was created.
+   */
+  created_at: ISO8601DateSchema,
+});
+
+/**
+ * Metrics payload for a Discord bot project.
+ * At least one of `server_count` or `shard_count` must be provided.
+ */
+export const DiscordBotMetricsSchema = z
+  .object({
+    /**
+     * The amount of servers the bot is in.
+     */
+    server_count: z.optional(z.number().check(z.minimum(0))),
+    /**
+     * The amount of shards the bot has.
+     */
+    shard_count: z.optional(z.number().check(z.minimum(0))),
+  })
+  .check(
+    z.refine(
+      (data) => data.server_count !== undefined || data.shard_count !== undefined,
+      "Either server_count or shard_count must be provided"
+    )
+  );
+
+/**
+ * Metrics payload for a Discord server project.
+ * At least one of `member_count` or `online_count` must be provided.
+ * `online_count` cannot exceed `member_count` when both are provided.
+ */
+export const DiscordServerMetricsSchema = z
+  .object({
+    /**
+     * The amount of members in the server.
+     */
+    member_count: z.optional(z.number().check(z.minimum(0))),
+    /**
+     * The amount of online members in the server.
+     */
+    online_count: z.optional(z.number().check(z.minimum(0))),
+  })
+  .check(
+    z.refine(
+      (data) => data.member_count !== undefined || data.online_count !== undefined,
+      "Either member_count or online_count must be provided"
+    ),
+    z.refine(
+      (data) =>
+        data.member_count === undefined ||
+        data.online_count === undefined ||
+        data.online_count <= data.member_count,
+      "online_count cannot exceed member_count"
+    )
+  );
+
+/**
+ * Metrics payload for a Roblox game project.
+ */
+export const RobloxGameMetricsSchema = z.object({
+  /**
+   * The amount of players currently in the game.
+   */
+  player_count: z.number().check(z.minimum(0)),
+});
+
+/**
+ * Request body for updating the authenticated project's current metrics.
+ * The shape used must match the project's own `platform`/`type` combination -
+ * the API does not accept a discriminant field to disambiguate.
+ *
+ * - PATCH `/v1/projects/@me/metrics`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-metrics
+ */
+export const UpdateProjectMetricsBodySchema = z.union([
+  DiscordBotMetricsSchema,
+  DiscordServerMetricsSchema,
+  RobloxGameMetricsSchema,
+]);
+
+/**
+ * A single entry in a metrics batch submission.
+ */
+export const ProjectMetricsBatchEntrySchema = z.object({
+  /**
+   * The metrics payload for this entry. Must match the project's `platform`/`type`.
+   */
+  metrics: UpdateProjectMetricsBodySchema,
+  /**
+   * The timestamp this entry applies to, for backfilling. Cannot exceed 5 minutes in the future.
+   */
+  timestamp: z.optional(ISO8601DateSchema),
+});
+
+/**
+ * Request body for submitting up to 100 metrics entries in a single batch.
+ *
+ * - POST `/v1/projects/@me/metrics/batch`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-metrics-batch
+ */
+export const UpdateProjectMetricsBatchBodySchema = z.object({
+  /**
+   * The metrics entries to submit.
+   */
+  data: z.array(ProjectMetricsBatchEntrySchema).check(z.minLength(1), z.maxLength(100)),
+});
+
+/**
+ * Permissive schema for a single Discord slash command definition.
+ * Intentionally does not replicate Discord's full application command spec -
+ * the source of truth for exact shape is `discord-api-types`/Discord's own docs.
+ */
+export const ApplicationCommandSchema = z.looseObject({
+  name: z.string(),
+  description: z.optional(z.string()),
+  type: z.optional(z.number()),
+  options: z.optional(z.array(z.unknown())),
+  default_member_permissions: z.optional(z.nullable(z.string())),
+  dm_permission: z.optional(z.nullable(z.boolean())),
+  nsfw: z.optional(z.boolean()),
+});
+
+/**
+ * Request body for overwriting the authenticated Discord bot project's slash commands.
+ * Only applicable to projects with `platform: "discord"` and `type: "bot"`.
+ * Pass an empty array to clear all commands.
+ *
+ * - PUT `/v1/projects/@me/commands`
+ *
+ * @see https://docs.top.gg/docs/API/v1/projects#update-commands
+ */
+export const UpdateProjectCommandsBodySchema = z.array(ApplicationCommandSchema);

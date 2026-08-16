@@ -93,6 +93,10 @@ export const BotSchema = z.object({
    */
   defAvatar: z.optional(z.string()),
   /**
+   * The library used to create the bot
+   */
+  lib: z.string(),
+  /**
    * The command prefix of the bot
    */
   prefix: z.string(),
@@ -352,7 +356,7 @@ export const UserSchema = z.object({
   /**
    * The cdn hash of the user's avatar if the user has none.
    */
-  defAvatar: z.optional(z.string()),
+  defAvatar: z.string(),
   /**
    * The bio of the user. This is a short description that the user can set on their profile. It may be empty or null if the user has not set a bio.
    *

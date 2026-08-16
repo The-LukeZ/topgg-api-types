@@ -86,6 +86,10 @@ export interface Bot {
    */
   defAvatar?: string;
   /**
+   * The library used to create the bot
+   */
+  lib: string;
+  /**
    * The command prefix of the bot
    */
   prefix: string;
@@ -354,7 +358,7 @@ export interface User {
   /**
    * The cdn hash of the user's avatar if the user has none.
    */
-  defAvatar?: string;
+  defAvatar: string;
   /**
    * The bio of the user. This is a short description that the user can set on their profile. It may be empty or null if the user has not set a bio.
    *
