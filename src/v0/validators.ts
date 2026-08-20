@@ -109,7 +109,7 @@ export const BotSchema = z.object({
 /**
  * Query parameters for searching bots on Top.gg.
  *
- * @see https://docs.top.gg/docs/API/v0/bot#search-bots
+ * @see https://docs.top.gg/api/v0/bots#get-bots
  */
 export const GetSearchBotsQuerySchema = z.object({
   /**

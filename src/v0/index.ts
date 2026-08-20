@@ -109,7 +109,7 @@ export interface Bot {
  *
  * TODO: there is no documentation on a "search" parameter, but the endpoint is called "search bots" and it would make sense for there to be a search parameter. Need to confirm if this is the case and if so, add it to the types.
  *
- * @see https://docs.top.gg/docs/API/v0/bot#search-bots
+ * @see https://docs.top.gg/api/v0/bots#get-bots
  */
 export interface GetSearchBotsQuery {
   /**

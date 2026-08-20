@@ -197,7 +197,7 @@ export const IntegrationCreateDataSchema = z.object({
  * The payload delivered to your webhook endpoint when an integration connection is created.
  * This will be sent if a user clicks "Connect" for your integration on the dashboard.
  *
- * @see https://docs.top.gg/docs/API/v1/integrations#2-topgg-sends-integrationcreate
+ * @see https://docs.top.gg/webhooks/integrations#the-handshake-flow
  */
 export const IntegrationCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "integration.create",
@@ -208,7 +208,7 @@ export const IntegrationCreateWebhookPayloadSchema = WebhookPayloadBaseSchema(
  * The response you must return from your webhook endpoint when you receive an `integration.create` event.
  * This tells Top.gg where to deliver webhook events for this integration connection and which events to deliver.
  *
- * @see https://docs.top.gg/docs/API/v1/integrations#3-respond-with-configuration
+ * @see https://docs.top.gg/webhooks/integrations#the-handshake-flow
  */
 export const IntegrationCreateResponseSchema = z.object({
   /**
@@ -218,7 +218,7 @@ export const IntegrationCreateResponseSchema = z.object({
   /**
    * An array of webhook scopes to subscribe to.
    *
-   * @see https://docs.top.gg/docs/API/v1/webhooks#supported-scopes
+   * @see https://docs.top.gg/webhooks/events
    */
   routes: z
     .array(IntegrationWebhookEventTypeSchema)
@@ -337,7 +337,7 @@ export const WebhookPayloadSchema = z.discriminatedUnion("type", [
  *
  * - GET `/v1/projects/@me`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#get-current-project
+ * @see https://docs.top.gg/api/v1/projects#get-projectsme
  */
 export const GetProjectResponseSchema = z.extend(BaseProjectSchema, {
   /**
@@ -377,7 +377,7 @@ export const GetProjectResponseSchema = z.extend(BaseProjectSchema, {
  *
  * Either `cursor` or `startDate` must be provided.
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votes
  */
 export const GetProjectVotesQuerySchema = z
   .object({
@@ -405,7 +405,7 @@ export const GetProjectVotesQuerySchema = z
  *
  * - GET `/v1/projects/@me/votes`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votes
  */
 export const GetProjectVotesResponseSchema = z.object({
   /**
@@ -423,7 +423,7 @@ export const GetProjectVotesResponseSchema = z.object({
  *
  * - GET `/v1/projects/@me/votes/:user_id`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votesuser_id
  */
 export const GetVoteStatusByUserQuerySchema = z.object({
   /**
@@ -437,7 +437,7 @@ export const GetVoteStatusByUserQuerySchema = z.object({
  *
  * - GET `/v1/projects/@me/votes/:user_id`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votesuser_id
  */
 export const GetVoteStatusByUserResponseSchema = z.object({
   /**
@@ -462,7 +462,7 @@ export const GetVoteStatusByUserResponseSchema = z.object({
  *
  * - PATCH `/v1/projects/@me`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-project
+ * @see https://docs.top.gg/api/v1/projects#patch-projectsme
  */
 export const UpdateProjectBodySchema = z
   .object({
@@ -496,7 +496,7 @@ export const AnnouncementCategorySchema = z.enum(["announcement", "event", "new_
  *
  * - POST `/v1/projects/@me/announcements`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ * @see https://docs.top.gg/api/v1/projects#post-projectsmeannouncements
  */
 export const CreateProjectAnnouncementBodySchema = z.object({
   /**
@@ -518,7 +518,7 @@ export const CreateProjectAnnouncementBodySchema = z.object({
  *
  * - POST `/v1/projects/@me/announcements`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ * @see https://docs.top.gg/api/v1/projects#post-projectsmeannouncements
  */
 export const CreateProjectAnnouncementResponseSchema = z.object({
   /**
@@ -604,7 +604,7 @@ export const RobloxGameMetricsSchema = z.object({
  *
  * - PATCH `/v1/projects/@me/metrics`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-metrics
+ * @see https://docs.top.gg/api/v1/projects#patch-projectsmemetrics
  */
 export const UpdateProjectMetricsBodySchema = z.union([
   DiscordBotMetricsSchema,
@@ -631,7 +631,7 @@ export const ProjectMetricsBatchEntrySchema = z.object({
  *
  * - POST `/v1/projects/@me/metrics/batch`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-metrics-batch
+ * @see https://docs.top.gg/api/v1/projects#post-projectsmemetricsbatch
  */
 export const UpdateProjectMetricsBatchBodySchema = z.object({
   /**
@@ -662,6 +662,6 @@ export const ApplicationCommandSchema = z.looseObject({
  *
  * - PUT `/v1/projects/@me/commands`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-commands
+ * @see https://docs.top.gg/api/v1/projects#put-projectsmecommands
  */
 export const UpdateProjectCommandsBodySchema = z.array(ApplicationCommandSchema);

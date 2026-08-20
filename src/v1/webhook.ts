@@ -29,7 +29,7 @@ const SIGNATURE_HEADER_PATTERN = /^t=(\d+),v1=([0-9a-f]+)$/;
  * The header has the form `t={unix timestamp},v1={hex-encoded HMAC-SHA256}`, where the signature
  * is computed over `{timestamp}.{rawBody}` using your integration's `webhook_secret`.
  *
- * @see https://docs.top.gg/api/v1/webhooks
+ * @see https://docs.top.gg/webhooks/overview#signature-verification-v1
  */
 export async function verifyWebhookSignature(
   options: VerifyWebhookSignatureOptions

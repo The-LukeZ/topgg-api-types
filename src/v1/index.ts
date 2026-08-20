@@ -186,7 +186,7 @@ export interface IntegrationCreateData {
  * The payload delivered to your webhook endpoint when an integration connection is created.
  * This will be sent if a user clicks "Connect" for your integration on the dashboard.
  *
- * @see https://docs.top.gg/docs/API/v1/integrations#2-topgg-sends-integrationcreate
+ * @see https://docs.top.gg/webhooks/integrations#the-handshake-flow
  */
 export type IntegrationCreateWebhookPayload = WebhookPayloadBase<
   "integration.create",
@@ -197,7 +197,7 @@ export type IntegrationCreateWebhookPayload = WebhookPayloadBase<
  * The response you must return from your webhook endpoint when you receive an `integration.create` event.
  * This tells Top.gg where to deliver webhook events for this integration connection and which events to deliver.
  *
- * @see https://docs.top.gg/docs/API/v1/integrations#3-respond-with-configuration
+ * @see https://docs.top.gg/webhooks/integrations#the-handshake-flow
  */
 export interface IntegrationCreateResponse {
   /**
@@ -207,7 +207,7 @@ export interface IntegrationCreateResponse {
   /**
    * An array of webhook scopes to subscribe to.
    *
-   * @see https://docs.top.gg/docs/API/v1/webhooks#supported-scopes
+   * @see https://docs.top.gg/webhooks/events
    */
   routes: WebhookEventType[];
 }
@@ -312,7 +312,7 @@ export type WebhookPayload<T extends WebhookEventTypes = WebhookEventTypes> = Ex
  *
  * - GET `/v1/projects/@me`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#get-current-project
+ * @see https://docs.top.gg/api/v1/projects#get-projectsme
  */
 export interface GetProjectResponse extends BaseProject {
   /**
@@ -352,7 +352,7 @@ export interface GetProjectResponse extends BaseProject {
  *
  * Either `cursor` or `startDate` must be provided.
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votes
  */
 export interface GetProjectVotesQuery {
   /**
@@ -376,7 +376,7 @@ export interface GetProjectVotesQuery {
  *
  * - GET `/v1/projects/@me/votes`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-votes
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votes
  */
 export interface GetProjectVotesResponse {
   /**
@@ -394,7 +394,7 @@ export interface GetProjectVotesResponse {
  *
  * - GET `/v1/projects/@me/votes/:user_id`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votesuser_id
  */
 export interface GetVoteStatusByUserQuery {
   /**
@@ -408,7 +408,7 @@ export interface GetVoteStatusByUserQuery {
  *
  * - GET `/v1/projects/@me/votes/:user_id`
  *
- * @see https://docs.top.gg/docs/API/v1/projects/#get-vote-status-by-user
+ * @see https://docs.top.gg/api/v1/votes#get-projectsme-votesuser_id
  */
 export interface GetVoteStatusByUserResponse {
   /**
@@ -433,7 +433,7 @@ export interface GetVoteStatusByUserResponse {
  *
  * - PATCH `/v1/projects/@me`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-project
+ * @see https://docs.top.gg/api/v1/projects#patch-projectsme
  */
 export interface UpdateProjectBody {
   /**
@@ -462,7 +462,7 @@ export type AnnouncementCategory = "announcement" | "event" | "new_feature";
  *
  * - POST `/v1/projects/@me/announcements`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ * @see https://docs.top.gg/api/v1/projects#post-projectsmeannouncements
  */
 export interface CreateProjectAnnouncementBody {
   /**
@@ -490,7 +490,7 @@ export interface CreateProjectAnnouncementBody {
  *
  * - POST `/v1/projects/@me/announcements`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#create-announcement
+ * @see https://docs.top.gg/api/v1/projects#post-projectsmeannouncements
  */
 export interface CreateProjectAnnouncementResponse {
   /**
@@ -565,7 +565,7 @@ export interface RobloxGameMetrics {
  *
  * - PATCH `/v1/projects/@me/metrics`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-metrics
+ * @see https://docs.top.gg/api/v1/projects#patch-projectsmemetrics
  */
 export type UpdateProjectMetricsBody = DiscordBotMetrics | DiscordServerMetrics | RobloxGameMetrics;
 
@@ -590,7 +590,7 @@ export interface ProjectMetricsBatchEntry {
  *
  * - POST `/v1/projects/@me/metrics/batch`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-metrics-batch
+ * @see https://docs.top.gg/api/v1/projects#post-projectsmemetricsbatch
  */
 export interface UpdateProjectMetricsBatchBody {
   /**
@@ -609,6 +609,6 @@ export interface UpdateProjectMetricsBatchBody {
  *
  * - PUT `/v1/projects/@me/commands`
  *
- * @see https://docs.top.gg/docs/API/v1/projects#update-commands
+ * @see https://docs.top.gg/api/v1/projects#put-projectsmecommands
  */
 export type UpdateProjectCommandsBody = RESTPostAPIApplicationCommandsJSONBody[];
