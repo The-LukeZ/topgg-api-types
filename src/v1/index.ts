@@ -235,15 +235,36 @@ export type IntegrationDeleteWebhookPayload = WebhookPayloadBase<
 /**
  * Data included when a vote is created.
  */
-export interface VoteCreateData extends Vote {
+export interface VoteCreateData {
   /**
    * The unique identifier for this vote.
    */
   id: Snowflake;
   /**
+   * The amount of votes this vote counted for.
+   */
+  weight: number;
+  /**
+   * The timestamp of when the user voted.
+   */
+  created_at: ISO8601Date;
+  /**
+   * The timestamp of when the vote expires (i.e., when the user can vote again).
+   * This is typically 12 hours after the `created_at` timestamp, but may vary based on the user's voting history and other factors.
+   */
+  expires_at: ISO8601Date;
+  /**
    * The project that was voted for.
    */
   project: BaseProject;
+  /**
+   * The parsed query string parameters found on the `/:id/vote` page.
+   *
+   * @example
+   * // for `/:id/vote?key1=value&key2=value2`
+   * { key1: "value", key2: "value2" }
+   */
+  query?: Record<string, string>;
   /**
    * The user who voted.
    */

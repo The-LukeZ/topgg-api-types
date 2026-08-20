@@ -253,11 +253,36 @@ export const IntegrationDeleteWebhookPayloadSchema = WebhookPayloadBaseSchema(
 /**
  * Data included when a vote is created.
  */
-export const VoteCreateDataSchema = z.extend(VoteSchema, {
+export const VoteCreateDataSchema = z.object({
+  /**
+   * The unique identifier for this vote.
+   */
+  id: SnowflakeSchema,
+  /**
+   * The amount of votes this vote counted for.
+   */
+  weight: z.number(),
+  /**
+   * The timestamp of when the user voted.
+   */
+  created_at: ISO8601DateSchema,
+  /**
+   * The timestamp of when the vote expires (i.e., when the user can vote again).
+   * This is typically 12 hours after the `created_at` timestamp, but may vary based on the user's voting history and other factors.
+   */
+  expires_at: ISO8601DateSchema,
   /**
    * The project that was voted for.
    */
   project: BaseProjectSchema,
+  /**
+   * The parsed query string parameters found on the `/:id/vote` page.
+   *
+   * @example
+   * // for `/:id/vote?key1=value&key2=value2`
+   * { key1: "value", key2: "value2" }
+   */
+  query: z.optional(z.record(z.string(), z.string())),
   /**
    * The user who voted.
    */
