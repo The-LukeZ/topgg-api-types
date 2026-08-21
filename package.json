@@ -75,13 +75,15 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "format": "prettier --write .",
-    "lint": "prettier --check ."
+    "lint": "prettier --check .",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.0",
     "prettier": "3.9.6",
     "tsdown": "^0.22.14",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "discord-api-types": "^0.38.53",

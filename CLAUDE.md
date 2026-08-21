@@ -13,10 +13,11 @@ Package manager is **pnpm**. Per user global config, do not run pnpm/npm/bun com
 - `pnpm run build` — build via tsdown (esm + cjs + dts) into `dist/`
 - `pnpm run dev` — tsdown in watch mode
 - `pnpm run format` — prettier write
-- `pnpm run lint` — prettier check (this is the only lint step; no test suite exists)
+- `pnpm run lint` — prettier check
+- `pnpm test` — run unit tests via vitest (`*.test.ts` files, e.g. `src/v1/validators.test.ts`)
 - `pnpm changeset` — record a changeset for the current change (bump type + summary); required on every PR that changes published code, see `RELEASING.md`
 
-There are no automated tests. "Testing changes" means: build succeeds and types/schemas match the real Top.gg API shape.
+"Testing changes" means: build succeeds, `pnpm test` passes, and types/schemas match the real Top.gg API shape. Prefer real (or realistic) sample payloads over synthetic edge cases when adding validator tests.
 
 Versioning/publishing is handled by Changesets (see `RELEASING.md`) — don't hand-bump `package.json` version or publish manually.
 
