@@ -665,3 +665,113 @@ export const ApplicationCommandSchema = z.looseObject({
  * @see https://docs.top.gg/api/v1/projects#put-projectsmecommands
  */
 export const UpdateProjectCommandsBodySchema = z.array(ApplicationCommandSchema);
+
+// ## OAuth Schemas
+//
+// Provisional schemas based on Top.gg's OAuth 2.1 announcement (2026-08). Endpoint paths are not yet
+// confirmed and official docs have not been published - shapes here may change once they land.
+
+/**
+ * Scopes that can be requested when registering an OAuth app and sending users through the consent screen.
+ * Access is scoped - only request the scopes you actually use.
+ *
+ * Not necessarily exhaustive - more scopes may exist once the official OAuth docs are published.
+ */
+export const OAuthScopeSchema = z.enum([
+  "user.identify",
+  "project.votes.read",
+  "project.webhooks.write",
+  "project.integrations.write",
+  "project.metrics.write",
+  "project.announcements.write",
+]);
+
+/**
+ * The OAuth 2.1 grant type used for a token request.
+ */
+export const OAuthGrantTypeSchema = z.enum(["authorization_code", "refresh_token"]);
+
+/**
+ * Request body for exchanging an authorization code for an access token (Authorization Code + PKCE flow).
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc7636
+ */
+export const OAuthAuthorizationCodeTokenRequestBodySchema = z.object({
+  grant_type: z.literal("authorization_code"),
+  /**
+   * The authorization code returned from the consent screen redirect.
+   */
+  code: z.string(),
+  /**
+   * Must match the `redirect_uri` used in the initial authorization request.
+   */
+  redirect_uri: z.string(),
+  /**
+   * Your OAuth app's client ID.
+   */
+  client_id: z.string(),
+  /**
+   * The PKCE code verifier corresponding to the `code_challenge` sent in the initial authorization request.
+   */
+  code_verifier: z.string(),
+});
+
+/**
+ * Request body for exchanging a refresh token for a new access token.
+ * Refresh tokens rotate on use - store the new `refresh_token` from the response and discard the old one.
+ */
+export const OAuthRefreshTokenRequestBodySchema = z.object({
+  grant_type: z.literal("refresh_token"),
+  /**
+   * The refresh token from a previous token response.
+   */
+  refresh_token: z.string(),
+  /**
+   * Your OAuth app's client ID.
+   */
+  client_id: z.string(),
+});
+
+/**
+ * Request body for the OAuth token endpoint. Shape depends on `grant_type`.
+ */
+export const OAuthTokenRequestBodySchema = z.discriminatedUnion("grant_type", [
+  OAuthAuthorizationCodeTokenRequestBodySchema,
+  OAuthRefreshTokenRequestBodySchema,
+]);
+
+/**
+ * Response from the OAuth token endpoint.
+ */
+export const OAuthTokenResponseSchema = z.object({
+  /**
+   * The access token to use as a `Bearer` token for API requests.
+   */
+  access_token: z.string(),
+  token_type: z.literal("Bearer"),
+  /**
+   * Seconds until `access_token` expires.
+   */
+  expires_in: z.number(),
+  /**
+   * Rotates on every use - the previous refresh token is invalidated once a new one is issued.
+   */
+  refresh_token: z.string(),
+  /**
+   * Space-separated list of scopes actually granted, which may be narrower than what was requested
+   * if the user declined some scopes on the consent screen.
+   */
+  scope: z.string(),
+});
+
+/**
+ * Error response from the OAuth token endpoint, per RFC 6749 Section 5.2.
+ * Distinct from `ErrorSchema`, which covers the rest of the API.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc6749#section-5.2
+ */
+export const OAuthErrorResponseSchema = z.object({
+  error: z.string(),
+  error_description: z.optional(z.string()),
+  error_uri: z.optional(z.string()),
+});
