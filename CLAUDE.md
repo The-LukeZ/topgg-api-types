@@ -25,18 +25,18 @@ Versioning/publishing is handled by Changesets (see `RELEASING.md`) — don't ha
 
 Source lives in `src/`, organized by API version:
 
-- `src/v0/` — legacy Top.gg API (v0): `index.ts` (types), `validators.ts` (zod/mini schemas)
-- `src/v1/` — current Top.gg API (v1): same split
+- `src/v0/` — legacy Top.gg API (v0): `index.ts` (types), `validators.ts` (zod/mini schemas). Small enough to stay as single files.
+- `src/v1/` — current Top.gg API (v1): `index.ts`/`validators.ts` are barrels only (`export type * from "./types/<topic>"` / `export * from "./schemas/<topic>"`); the actual definitions live one topic per file under `src/v1/types/` and `src/v1/schemas/`, e.g. `types/oauth.ts` ↔ `schemas/oauth.ts`. Current topics: `base` (shared enums/constants, `User`, `BaseProject`, `Vote`, webhook payload base), `integrations`, `votes` (vote payloads + `WebhookPayload` union), `projects` (project reads + writes: announcements, metrics, commands), `oauth`. Topic files import from each other with relative imports (e.g. `./base`), never through the `index.ts`/`validators.ts` barrel, to avoid circular imports.
 - `src/utils/` — shared primitives used by both versions: `index.ts` has `Snowflake`/`ISO8601Date` type aliases, `validators.ts` has the corresponding `SnowflakeSchema`/`ISO8601DateSchema`
 - `src/index.ts` — re-exports v1 as the "latest" default (`export type * from "@v1/index"` + `export * from "@v1/validators"`)
 
-Path aliases (defined in both `tsconfig.json` and `tsdown.config.ts` — keep them in sync): `@src`, `@utils`, `@v0`, `@v1`.
+Path aliases (defined in both `tsconfig.json` and `tsdown.config.ts` — keep them in sync): `@src`, `@utils`, `@v0`, `@v1`. `tsdown.config.ts`'s public entry points still point at `src/v1/index.ts`/`src/v1/validators.ts` (the barrels) — the `types/`/`schemas/` split is an internal implementation detail, not a new public entry surface.
 
 **Each version's `validators.ts` re-exports from `@utils/validators`**, so importing `topgg-api-types/v1/validators` also gives you `SnowflakeSchema`/`ISO8601DateSchema`.
 
 ### Type/schema pairing convention
 
-Every exported type in `index.ts` has a matching zod/mini schema of the same name + `Schema` suffix in `validators.ts`, kept in the same file order and with the same JSDoc comment. E.g. `User` type ↔ `UserSchema`. When adding or editing one, update the other to match.
+Every exported type has a matching zod/mini schema of the same name + `Schema` suffix, kept in the same file (same topic file for v1, same file for v0) in the same order and with the same JSDoc comment. E.g. `User` type in `v1/types/base.ts` ↔ `UserSchema` in `v1/schemas/base.ts`. When adding or editing one, update the other to match. Types are hand-written rather than derived from schemas (`z.infer`) — schema-derived types lose per-field JSDoc on hover (no declaration-level link from the inferred object-literal type back to the schema's comments) and would downgrade types that intentionally use a more precise external type than their schema (e.g. `UpdateProjectCommandsBody` uses `discord-api-types`'s exact command type while `ApplicationCommandSchema` is a deliberately loose runtime check).
 
 ### Build/export surface
 
