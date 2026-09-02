@@ -1,0 +1,9 @@
+{
+  "name": "@topgg-api-types/typedoc-tooling",
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "typedoc": "^0.28.14",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,4 +1,11 @@
+packages:
+  - "."
+  - "tooling/*"
+  - "docs-site"
+
 allowBuilds:
   esbuild: true
+  workerd: true
+
 minimumReleaseAgeExclude:
   - "@changesets/cli@3.0.0"

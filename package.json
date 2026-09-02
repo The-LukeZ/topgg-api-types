@@ -83,7 +83,8 @@
     "dev": "tsdown --watch",
     "format": "prettier --write .",
     "lint": "prettier --check .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "docs": "node ./tooling/typedoc/node_modules/typedoc/bin/typedoc"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.1",
