@@ -3,7 +3,7 @@ import { defineConfig } from "svelte-docsmith";
 // The whole-site config passed to DocsShell. Set your title, links, and the
 // SEO/social defaults here. See https://docsmith.geodask.com.
 export const siteConfig = defineConfig({
-  title: "Docs Site",
+  title: "Top.gg API Types",
   nav: [
     { label: "API Reference", href: "/docs/api" },
     { label: "LLMs", href: "/llms.txt", external: true },
