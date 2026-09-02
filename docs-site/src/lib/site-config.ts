@@ -4,14 +4,16 @@ import { defineConfig } from "svelte-docsmith";
 // SEO/social defaults here. See https://docsmith.geodask.com.
 export const siteConfig = defineConfig({
   title: "Docs Site",
-  // github: 'https://github.com/you/your-library',
-  // description: 'A short tagline, used as the default meta description.',
-  // Set `url` to your deployed origin so the sitemap, llms.txt, and social
-  // tags emit absolute links.
-  // url: 'https://your-docs.dev',
-  // Base URL for the "Edit this page" link (points at your repo's docs dir).
-  // editUrl: 'https://github.com/you/your-library/edit/main',
+  nav: [
+    { label: "API Reference", href: "/docs/api" },
+    { label: "LLMs", href: "/llms.txt", external: true },
+  ],
+  description:
+    "TypeScript types and zod/mini runtime validators for the Top.gg API, plus optional REST, OAuth, and webhook clients.",
+  url: "https://topgg-api-types.thelukez.com",
+  github: "https://github.com/github.com/The-LukeZ/topgg-api-types",
+  editUrl: "https://github.com/The-LukeZ/topgg-api-types/edit/main/docs-site/src/routes/docs/",
   footer: {
-    copyright: `© ${new Date().getFullYear()} Docs Site`,
+    copyright: `© ${new Date().getFullYear()} The-LukeZ`,
   },
 });

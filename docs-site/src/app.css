@@ -1,27 +1,35 @@
 @import "tailwindcss";
 
-/* The whole Svelte DocSmith style contract in one import: it makes Tailwind scan
- * the package, registers the design tokens for light and dark, and pulls in the
- * typography and animation plugins. */
 @import "svelte-docsmith/theme.css";
 @import 'svelte-docsmith/themes/bubblegum.css';
 
-/* Darkmatter is the default, already applied by theme.css. Prefer a different
- * look? Import a preset after theme.css and it wins:
- *   @import 'svelte-docsmith/themes/amethyst.css';
- * Available: tangerine, amethyst, graphite, evergreen, rose, ocean, nord,
- * claude, bubblegum, mono. Or override individual tokens yourself. */
 
-/* Sidebar overflows horizontally on long API reference labels (generated
- * type/function names). The width lives on the <aside> itself (Tailwind's
- * `w-56`), not the <nav> it wraps, so override that directly and truncate
- * the long labels instead of letting them force the sidebar wider. */
-aside:has(> nav[aria-label="Documentation"]) {
-  width: 18rem !important;
+aside:has(nav[aria-label="Documentation"]) {
+  width: 20rem !important;
 }
 
-aside:has(> nav[aria-label="Documentation"]) :where(a, button, li) {
+aside:has(nav[aria-label="Documentation"]) li>a {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+}
+
+/* Docs shell (sidebar + content + TOC row, the element right before the
+ * footer) is capped at Tailwind's `max-w-7xl`. Widen it — scoped to "a div
+ * whose aside contains the docs nav", not just "a div wrapping main#main-
+ * content": the landing page's `layout="page"` shell also puts its `main` as
+ * a direct child of a div (the outermost page wrapper), so targeting on
+ * `main` alone widens the whole landing page too. `nav[aria-label=
+ * "Documentation"]` sits one level deeper inside `aside` (there's a
+ * scroll-wrapper div between them), so no `>` between aside and nav here. */
+div:has(> aside nav[aria-label="Documentation"]) {
+  max-width: 100rem !important;
+}
+
+/* The header is one shared component across every layout, docs and landing
+ * alike, so widening it unconditionally leaks onto the landing page too.
+ * `body:has()` keys the header's width off whether a docs sidebar is
+ * actually rendered anywhere on the current page. */
+body:has(aside nav[aria-label="Documentation"]) header.sticky > div {
+  max-width: 100rem !important;
 }

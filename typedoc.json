@@ -19,7 +19,8 @@
       "path": "docs-site/generated/api-md",
       "options": {
         "flattenOutputFiles": false,
-        "fileExtension": ".md"
+        "fileExtension": ".md",
+        "mergeReadme": true,
       }
     }
   ]
