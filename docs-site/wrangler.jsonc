@@ -11,4 +11,10 @@
   "observability": {
     "enabled": true,
   },
+  "route": {
+    "custom_domain": true,
+    "pattern": "topgg-api-types.thelukez.com",
+  },
+  "workers_dev": false,
+  "preview_urls": true,
 }
