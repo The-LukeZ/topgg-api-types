@@ -21,6 +21,8 @@
         "flattenOutputFiles": false,
         "fileExtension": ".md",
         "mergeReadme": true,
+        "hidePageHeader": true,
+        "hideBreadcrumbs": true
       }
     }
   ]

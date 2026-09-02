@@ -1,14 +1,13 @@
 @import "tailwindcss";
 
 @import "svelte-docsmith/theme.css";
-@import 'svelte-docsmith/themes/bubblegum.css';
-
+@import "svelte-docsmith/themes/bubblegum.css";
 
 aside:has(nav[aria-label="Documentation"]) {
   width: 20rem !important;
 }
 
-aside:has(nav[aria-label="Documentation"]) li>a {
+aside:has(nav[aria-label="Documentation"]) li > a {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
@@ -30,20 +29,18 @@ div:has(> aside nav[aria-label="Documentation"]) {
  * alike, so widening it unconditionally leaks onto the landing page too.
  * `body:has()` keys the header's width off whether a docs sidebar is
  * actually rendered anywhere on the current page. */
-body:has(aside nav[aria-label="Documentation"]) header.sticky>div {
+body:has(aside nav[aria-label="Documentation"]) header.sticky > div {
   max-width: 100rem !important;
 }
 
 @layer utilities {
-
   .prose {
-
-    blockquote>p {
+    blockquote > p {
       font-style: normal !important;
     }
 
-    blockqoute>p::after,
-    blockquote>p::before {
+    blockqoute > p::after,
+    blockquote > p::before {
       content: none !important;
     }
   }

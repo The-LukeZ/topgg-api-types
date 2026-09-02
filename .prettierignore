@@ -7,3 +7,15 @@ pnpm-lock.yaml
 .github/
 .claude/
 CLAUDE.md
+
+# docs-site artifacts
+docs-site/.svelte-kit/
+docs-site/build/
+docs-site/.output/
+docs-site/.vercel/
+docs-site/.netlify/
+docs-site/.wrangler/
+
+# Generated API docs (from `pnpm run docs:api`, sourced from typedoc)
+docs-site/generated
+docs-site/src/routes/docs/api/

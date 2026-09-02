@@ -36,7 +36,7 @@ function escapeBraces(text) {
   // Quote characters ('/") get mangled by the markdown pipeline before Svelte
   // sees them, so avoid any quoting in the injected expression.
   return text.replace(/\\?[{}]/g, (match) =>
-    match.endsWith("{") ? "{String.fromCharCode(123)}" : "{String.fromCharCode(125)}",
+    match.endsWith("{") ? "{String.fromCharCode(123)}" : "{String.fromCharCode(125)}"
   );
 }
 
