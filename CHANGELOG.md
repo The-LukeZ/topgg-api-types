@@ -1,5 +1,11 @@
 # topgg-api-types
 
+## 2.1.0
+
+### Minor Changes
+
+- 7db3d9b: Add OAuth 2.1 types and zod/mini schemas: authorization query, token exchange/refresh, revoke, and error response shapes.
+
 ## 2.0.1
 
 ### Patch Changes
