@@ -47,6 +47,22 @@ function escapeBracesOutsideCodeFences(content) {
     .join("");
 }
 
+// v0's and v1's module index pages (generated/api-md/v0|v1/README.md) are just
+// a bare re-export/member list with no content of their own — they'd otherwise
+// land as loose, low-value entries in the sidebar. Drop them, and drop the
+// root README's links to them so it doesn't point at missing pages.
+const SKIPPED_MODULE_INDEXES = new Set(["v0", "v1"]);
+
+function stripSkippedModuleLinks(content) {
+  return content
+    .split("\n")
+    .filter((line) => {
+      const match = line.match(/^- \[([^\]]+)\]\(([^)]+)\/README\.md\)$/);
+      return !(match && SKIPPED_MODULE_INDEXES.has(match[1]));
+    })
+    .join("\n");
+}
+
 async function main() {
   await rm(destDir, { recursive: true, force: true });
 
@@ -58,10 +74,14 @@ async function main() {
     // "index"; both map to their containing directory's route.
     const isIndexFile = base === "index" || base === "README";
     const slug = isIndexFile ? dirname(rel) : join(dirname(rel), base);
+
+    if (isIndexFile && SKIPPED_MODULE_INDEXES.has(slug)) continue;
+
     const outDir = join(destDir, slug === "." ? "" : slug);
     await mkdir(outDir, { recursive: true });
 
-    const content = await readFile(file, "utf8");
+    let content = await readFile(file, "utf8");
+    if (rel === "README.md") content = stripSkippedModuleLinks(content);
     await writeFile(join(outDir, "+page.md"), escapeBracesOutsideCodeFences(content));
   }
 
