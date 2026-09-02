@@ -143,6 +143,11 @@ export const OAuthRefreshTokenRequestBodySchema = z.object({
    * Your OAuth app's client secret. Can be sent as HTTP Basic authentication instead.
    */
   client_secret: z.optional(z.string()),
+  /**
+   * Space-separated subset of the granted scopes to narrow the new access token. Defaults to all
+   * granted scopes.
+   */
+  scope: z.optional(z.string()),
 });
 
 /**
@@ -206,6 +211,10 @@ export const OAuthRevokeRequestBodySchema = z.object({
    * The refresh token identifying the authorization to revoke.
    */
   token: z.string(),
+  /**
+   * Accepted for compatibility with RFC 7009. Must be `refresh_token` when present.
+   */
+  token_type_hint: z.optional(z.literal("refresh_token")),
   /**
    * Your OAuth app's client ID.
    */

@@ -141,6 +141,11 @@ export interface OAuthRefreshTokenRequestBody {
    * Your OAuth app's client secret. Can be sent as HTTP Basic authentication instead.
    */
   client_secret?: string;
+  /**
+   * Space-separated subset of the granted scopes to narrow the new access token. Defaults to all
+   * granted scopes.
+   */
+  scope?: string;
 }
 
 /**
@@ -202,6 +207,10 @@ export interface OAuthRevokeRequestBody {
    * The refresh token identifying the authorization to revoke.
    */
   token: string;
+  /**
+   * Accepted for compatibility with RFC 7009. Must be `refresh_token` when present.
+   */
+  token_type_hint?: "refresh_token";
   /**
    * Your OAuth app's client ID.
    */
