@@ -7,6 +7,13 @@ import type { Snowflake } from "@utils/index";
 export const Routes = {
   /**
    * Route for:
+   * - GET `/projects`
+   */
+  projects() {
+    return "/projects" as const;
+  },
+  /**
+   * Route for:
    * - GET `/projects/@me`
    * - PATCH `/projects/@me`
    */
@@ -54,5 +61,19 @@ export const Routes = {
    */
   projectCommands() {
     return "/projects/@me/commands" as const;
+  },
+  /**
+   * Route for:
+   * - POST `/oauth2/token`
+   */
+  oauth2Token() {
+    return "/oauth2/token" as const;
+  },
+  /**
+   * Route for:
+   * - POST `/oauth2/revoke`
+   */
+  oauth2Revoke() {
+    return "/oauth2/revoke" as const;
   },
 } as const;

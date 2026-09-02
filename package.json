@@ -50,6 +50,10 @@
       "import": "./dist/v1/client.js",
       "require": "./dist/v1/client.cjs"
     },
+    "./v1/oauth": {
+      "import": "./dist/v1/oauth.js",
+      "require": "./dist/v1/oauth.cjs"
+    },
     "./v1/routes": {
       "import": "./dist/v1/routes.js",
       "require": "./dist/v1/routes.cjs"

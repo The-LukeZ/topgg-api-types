@@ -2,6 +2,8 @@ import type {
   CreateProjectAnnouncementBody,
   CreateProjectAnnouncementResponse,
   GetProjectResponse,
+  GetProjectsQuery,
+  GetProjectsResponse,
   GetProjectVotesQuery,
   GetProjectVotesResponse,
   GetVoteStatusByUserQuery,
@@ -15,6 +17,7 @@ import type {
 import {
   CreateProjectAnnouncementResponseSchema,
   GetProjectResponseSchema,
+  GetProjectsResponseSchema,
   GetProjectVotesResponseSchema,
   GetVoteStatusByUserResponseSchema,
 } from "@v1/validators";
@@ -85,6 +88,25 @@ export class TopGGClient {
 
   #headers(): Record<string, string> {
     return { Authorization: `Bearer ${this.#token}` };
+  }
+
+  /**
+   * - GET `/v1/projects`
+   *
+   * Lists the projects covered by the current credential. Requires an OAuth access token or
+   * application token — not available with a project token (`@me`-style requests below).
+   */
+  async getProjects(query?: GetProjectsQuery): Promise<GetProjectsResponse> {
+    const qs = buildQueryString({ cursor: query?.cursor });
+    const data = await performRequest<GetProjectsResponse>({
+      baseUrl: this.#baseUrl,
+      path: `${Routes.projects()}${qs}`,
+      method: "GET",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+    if (this.#validateResponses) GetProjectsResponseSchema.parse(data);
+    return data as GetProjectsResponse;
   }
 
   /**

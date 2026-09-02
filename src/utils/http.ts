@@ -85,21 +85,48 @@ export interface PerformRequestOptions {
   method: string;
   headers: Record<string, string>;
   body?: unknown;
+  /**
+   * How to encode `body`.
+   *
+   * @default "json"
+   */
+  bodyType?: "json" | "form";
   fetchImpl: typeof fetch;
+}
+
+function encodeFormBody(body: Record<string, unknown>): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(body)) {
+    if (value !== undefined) params.set(key, String(value));
+  }
+  return params.toString();
 }
 
 /**
  * Performs an HTTP request against a Top.gg API, throwing {@link TopGGAPIError} on non-2xx responses.
- * Returns `undefined` for `204 No Content` responses.
+ * Returns `undefined` for `204 No Content` responses, or any other response with an empty body.
  */
 export async function performRequest<T>(opts: PerformRequestOptions): Promise<T | undefined> {
+  const bodyType = opts.bodyType ?? "json";
+  const encodedBody =
+    opts.body !== undefined
+      ? bodyType === "form"
+        ? encodeFormBody(opts.body as Record<string, unknown>)
+        : JSON.stringify(opts.body)
+      : undefined;
+
   const res = await opts.fetchImpl(`${opts.baseUrl}${opts.path}`, {
     method: opts.method,
     headers: {
-      ...(opts.body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...(encodedBody !== undefined
+        ? {
+            "Content-Type":
+              bodyType === "form" ? "application/x-www-form-urlencoded" : "application/json",
+          }
+        : {}),
       ...opts.headers,
     },
-    ...(opts.body !== undefined ? { body: JSON.stringify(opts.body) } : {}),
+    ...(encodedBody !== undefined ? { body: encodedBody } : {}),
   });
 
   if (!res.ok) {
@@ -118,5 +145,7 @@ export async function performRequest<T>(opts: PerformRequestOptions): Promise<T 
   }
 
   if (res.status === 204) return undefined;
-  return (await res.json()) as T;
+  const text = await res.text();
+  if (!text) return undefined;
+  return JSON.parse(text) as T;
 }

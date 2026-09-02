@@ -5,6 +5,55 @@ import { ISO8601DateSchema } from "@utils/validators";
 import { BaseProjectSchema, LocaleSchema, ProjectVoteSchema, UserSourceSchema } from "./base";
 
 /**
+ * A project covered by the current credential, as returned by the project list endpoint.
+ */
+export const ListedProjectSchema = z.extend(BaseProjectSchema, {
+  /**
+   * The project's name.
+   */
+  name: z.string(),
+});
+
+/**
+ * Query parameters for listing the projects covered by the current credential.
+ *
+ * - GET `/v1/projects`
+ *
+ * @see https://docs.top.gg/api/v1/projects#get-projects
+ */
+export const GetProjectsQuerySchema = z.object({
+  /**
+   * Pagination cursor for fetching the next page. Only meaningful with an application token.
+   *
+   * From the previous response.
+   */
+  cursor: z.optional(z.string()),
+});
+
+/**
+ * Response schema for listing the projects covered by the current credential.
+ *
+ * With an OAuth access token this is the single project of the authorization. With an
+ * application token this is every project granted to the application, 100 per page.
+ * Not available with project tokens.
+ *
+ * - GET `/v1/projects`
+ *
+ * @see https://docs.top.gg/api/v1/projects#get-projects
+ */
+export const GetProjectsResponseSchema = z.object({
+  /**
+   * The covered projects.
+   */
+  projects: z.array(ListedProjectSchema),
+  /**
+   * Pagination cursor for fetching the next page. Present while more pages exist. Only
+   * meaningful with an application token.
+   */
+  cursor: z.optional(z.string()),
+});
+
+/**
  * Response schema for getting the authenticated project.
  *
  * - GET `/v1/projects/@me`

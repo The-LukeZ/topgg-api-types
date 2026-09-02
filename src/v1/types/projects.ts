@@ -5,6 +5,55 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types/v
 import type { BaseProject, Locale, ProjectVote, UserSource } from "./base";
 
 /**
+ * A project covered by the current credential, as returned by the project list endpoint.
+ */
+export interface ListedProject extends BaseProject {
+  /**
+   * The project's name.
+   */
+  name: string;
+}
+
+/**
+ * Query parameters for listing the projects covered by the current credential.
+ *
+ * - GET `/v1/projects`
+ *
+ * @see https://docs.top.gg/api/v1/projects#get-projects
+ */
+export interface GetProjectsQuery {
+  /**
+   * Pagination cursor for fetching the next page. Only meaningful with an application token.
+   *
+   * From the previous response.
+   */
+  cursor?: string;
+}
+
+/**
+ * Response for listing the projects covered by the current credential.
+ *
+ * With an OAuth access token this is the single project of the authorization. With an
+ * application token this is every project granted to the application, 100 per page.
+ * Not available with project tokens.
+ *
+ * - GET `/v1/projects`
+ *
+ * @see https://docs.top.gg/api/v1/projects#get-projects
+ */
+export interface GetProjectsResponse {
+  /**
+   * The covered projects.
+   */
+  projects: ListedProject[];
+  /**
+   * Pagination cursor for fetching the next page. Present while more pages exist. Only
+   * meaningful with an application token.
+   */
+  cursor?: string;
+}
+
+/**
  * Response for getting the authenticated project.
  *
  * - GET `/v1/projects/@me`

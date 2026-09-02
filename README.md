@@ -79,6 +79,13 @@ const client = new TopGGClient({ token, validateResponses: true });
 
 Non-2xx responses throw `TopGGAPIError` (`status`, `type`, `title`, `detail`, and `retryAfter` when the API sends a `Retry-After` header). `getVoteStatus` is the one exception — a 404 there resolves to `null` instead of throwing, since that's the documented "user hasn't voted" response.
 
+`getProjects()` lists every project covered by the current credential (paginated with `cursor`, same shape as `getProjectVotes`). It needs an OAuth access token or [application token](https://docs.top.gg/oauth/application-token) — not available with a project token, unlike every other `TopGGClient` method:
+
+```ts
+const client = new TopGGClient({ token: process.env.TOPGG_APPLICATION_TOKEN! });
+const { projects, cursor } = await client.getProjects();
+```
+
 For the deprecated legacy API, use `TopGGLegacyClient` from `topgg-api-types/v0/client` — same shape, but the `Authorization` header is sent raw (no `Bearer` prefix), matching the v0 API.
 
 Votes are paginated by cursor. `getProjectVotes` returns a page with a `next()` method for fetching the following page:
@@ -92,6 +99,32 @@ console.log(secondPage.data);
 ```
 
 `cursor` is always present on a page, even the last one — stop paging once `data` comes back empty.
+
+### OAuth Client
+
+For apps that act on behalf of Top.gg users (the OAuth 2.1 authorization code + PKCE flow), import `TopGGOAuthClient` from the `v1/oauth` subpath. It builds the authorization URL, exchanges/refreshes tokens, and revokes authorizations. Holds your client secret, so use it only from a backend:
+
+```ts
+import { TopGGOAuthClient } from "topgg-api-types/v1/oauth";
+
+const oauth = new TopGGOAuthClient({
+  clientId: process.env.TOPGG_CLIENT_ID!,
+  clientSecret: process.env.TOPGG_CLIENT_SECRET!,
+});
+
+const authorizeUrl = oauth.buildAuthorizeUrl({
+  redirect_uri: "https://example.com/oauth/callback",
+  scope: "project.votes.read project.webhooks.write",
+  state,
+  code_challenge,
+});
+
+const tokens = await oauth.exchangeCode({ code, redirect_uri, code_verifier });
+const refreshed = await oauth.refreshToken({ refresh_token: tokens.refresh_token });
+await oauth.revoke({ token: refreshed.refresh_token });
+```
+
+See the [authorization guide](https://docs.top.gg/oauth/authorization) for the full flow, including PKCE `code_verifier`/`code_challenge` generation.
 
 ### Routes
 
@@ -131,6 +164,7 @@ For the deprecated v0 API, webhook auth is just a raw string comparison: Top.gg 
 - `topgg-api-types/v1` - Version 1 types (current)
 - `topgg-api-types/v1/validators` - Version 1 Zod validators
 - `topgg-api-types/v1/client` - Version 1 REST client (`TopGGClient`) and `Routes`
+- `topgg-api-types/v1/oauth` - Version 1 OAuth 2.1 client (`TopGGOAuthClient`)
 - `topgg-api-types/v1/routes` - Version 1 `Routes` path builders (standalone, no client)
 - `topgg-api-types/v1/webhook` - Version 1 webhook signature verification (`verifyWebhookSignature`)
 - `topgg-api-types/v0` - Version 0 types

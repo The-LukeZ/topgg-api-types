@@ -11,6 +11,7 @@ export default defineConfig({
     "v0/validators": "src/v0/validators.ts",
     "v1/client": "src/v1/client.ts",
     "v0/client": "src/v0/client.ts",
+    "v1/oauth": "src/v1/oauthClient.ts",
     "v1/routes": "src/v1/routes.ts",
     "v0/routes": "src/v0/routes.ts",
     "v1/webhook": "src/v1/webhook.ts",
