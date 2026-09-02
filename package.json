@@ -84,7 +84,7 @@
     "format": "prettier --write .",
     "lint": "prettier --check .",
     "test": "vitest run",
-    "docs": "node ./tooling/typedoc/node_modules/typedoc/bin/typedoc"
+    "docs": "node ./tooling/typedoc/node_modules/typedoc/bin/typedoc && node ./docs-site/scripts/sync-api-docs.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.1",

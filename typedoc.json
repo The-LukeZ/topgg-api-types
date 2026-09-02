@@ -1,11 +1,26 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src/index.ts", "src/v0/index.ts", "src/v1/index.ts"],
-  "out": "docs",
   "excludePrivate": true,
   "excludeInternal": true,
   "excludeExternals": true,
   "readme": "README.md",
   "githubPages": false,
-  "json": "docs/typedoc.json"
+  "plugin": [
+    "./tooling/typedoc/node_modules/typedoc-plugin-markdown/dist/index.js",
+    "./tooling/typedoc/node_modules/typedoc-plugin-frontmatter/dist/index.js",
+    "./tooling/typedoc/frontmatter-plugin.mjs"
+  ],
+  "outputs": [
+    { "name": "html", "path": "docs" },
+    { "name": "json", "path": "docs/typedoc.json" },
+    {
+      "name": "markdown",
+      "path": "docs-site/generated/api-md",
+      "options": {
+        "flattenOutputFiles": false,
+        "fileExtension": ".md"
+      }
+    }
+  ]
 }

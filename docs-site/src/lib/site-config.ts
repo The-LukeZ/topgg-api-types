@@ -11,7 +11,6 @@ export const siteConfig = defineConfig({
   // url: 'https://your-docs.dev',
   // Base URL for the "Edit this page" link (points at your repo's docs dir).
   // editUrl: 'https://github.com/you/your-library/edit/main',
-  nav: [{ label: "Docs", href: "/docs/introduction" }],
   footer: {
     copyright: `© ${new Date().getFullYear()} Docs Site`,
   },

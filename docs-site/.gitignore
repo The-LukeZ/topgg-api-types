@@ -22,3 +22,7 @@ Thumbs.db
 
 # Unignore docs route for SvelteKit
 !src/routes/docs/
+
+# Generated API docs (from `pnpm run docs:api`, sourced from typedoc)
+/generated
+src/routes/docs/api/

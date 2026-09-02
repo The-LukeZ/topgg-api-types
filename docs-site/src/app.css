@@ -11,3 +11,17 @@
  *   @import 'svelte-docsmith/themes/amethyst.css';
  * Available: tangerine, amethyst, graphite, evergreen, rose, ocean, nord,
  * claude, bubblegum, mono. Or override individual tokens yourself. */
+
+/* Sidebar overflows horizontally on long API reference labels (generated
+ * type/function names). The width lives on the <aside> itself (Tailwind's
+ * `w-56`), not the <nav> it wraps, so override that directly and truncate
+ * the long labels instead of letting them force the sidebar wider. */
+aside:has(> nav[aria-label="Documentation"]) {
+  width: 18rem !important;
+}
+
+aside:has(> nav[aria-label="Documentation"]) :where(a, button, li) {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}

@@ -15,8 +15,8 @@
 		description="A short line about what your project does and who it's for."
 	>
 		{#snippet actions()}
-			<Action href="/docs/quick-start">Get started</Action>
-			<Action href="/docs/introduction" variant="secondary">Read the docs</Action>
+		<Action href="/docs/introduction">Get started</Action>
+		<Action href="/docs/introduction" variant="secondary">API Reference</Action>
 		{/snippet}
 	</Hero>
 
