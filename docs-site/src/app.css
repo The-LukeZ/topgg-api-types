@@ -30,6 +30,21 @@ div:has(> aside nav[aria-label="Documentation"]) {
  * alike, so widening it unconditionally leaks onto the landing page too.
  * `body:has()` keys the header's width off whether a docs sidebar is
  * actually rendered anywhere on the current page. */
-body:has(aside nav[aria-label="Documentation"]) header.sticky > div {
+body:has(aside nav[aria-label="Documentation"]) header.sticky>div {
   max-width: 100rem !important;
+}
+
+@layer utilities {
+
+  .prose {
+
+    blockquote>p {
+      font-style: normal !important;
+    }
+
+    blockqoute>p::after,
+    blockquote>p::before {
+      content: none !important;
+    }
+  }
 }
