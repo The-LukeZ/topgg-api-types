@@ -1,6 +1,8 @@
 import type {
   CreateProjectAnnouncementBody,
   CreateProjectAnnouncementResponse,
+  CreateProjectWebhookBody,
+  CreateProjectWebhookResponse,
   GetProjectResponse,
   GetProjectsQuery,
   GetProjectsResponse,
@@ -8,7 +10,10 @@ import type {
   GetProjectVotesResponse,
   GetVoteStatusByUserQuery,
   GetVoteStatusByUserResponse,
+  ListProjectIntegrationsResponse,
+  ListProjectWebhooksResponse,
   ProjectVote,
+  RotateProjectWebhookResponse,
   UpdateProjectBody,
   UpdateProjectCommandsBody,
   UpdateProjectMetricsBatchBody,
@@ -16,10 +21,14 @@ import type {
 } from "@v1/index";
 import {
   CreateProjectAnnouncementResponseSchema,
+  CreateProjectWebhookResponseSchema,
   GetProjectResponseSchema,
   GetProjectsResponseSchema,
   GetProjectVotesResponseSchema,
   GetVoteStatusByUserResponseSchema,
+  ListProjectIntegrationsResponseSchema,
+  ListProjectWebhooksResponseSchema,
+  RotateProjectWebhookResponseSchema,
 } from "@v1/validators";
 import type { Snowflake } from "@utils/index";
 import { buildQueryString, performRequest, TopGGAPIError } from "@utils/http";
@@ -243,6 +252,149 @@ export class TopGGClient {
       method: "PUT",
       headers: this.#headers(),
       body,
+      fetchImpl: this.#fetch,
+    });
+  }
+
+  /**
+   * - GET `/v1/projects/{project_id}/webhooks`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async listProjectWebhooks(projectId: Snowflake | "@me"): Promise<ListProjectWebhooksResponse> {
+    const data = await performRequest<ListProjectWebhooksResponse>({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectWebhooks(projectId),
+      method: "GET",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+    if (this.#validateResponses) ListProjectWebhooksResponseSchema.parse(data);
+    return data as ListProjectWebhooksResponse;
+  }
+
+  /**
+   * - POST `/v1/projects/{project_id}/webhooks`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async createProjectWebhook(
+    projectId: Snowflake | "@me",
+    body: CreateProjectWebhookBody
+  ): Promise<CreateProjectWebhookResponse> {
+    const data = await performRequest<CreateProjectWebhookResponse>({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectWebhooks(projectId),
+      method: "POST",
+      headers: this.#headers(),
+      body,
+      fetchImpl: this.#fetch,
+    });
+    if (this.#validateResponses) CreateProjectWebhookResponseSchema.parse(data);
+    return data as CreateProjectWebhookResponse;
+  }
+
+  /**
+   * - DELETE `/v1/projects/{project_id}/webhooks/{webhook_id}`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async deleteProjectWebhook(projectId: Snowflake | "@me", webhookId: string): Promise<void> {
+    await performRequest({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectWebhook(projectId, webhookId),
+      method: "DELETE",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+  }
+
+  /**
+   * - POST `/v1/projects/{project_id}/webhooks/{webhook_id}/rotate`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async rotateProjectWebhookSecret(
+    projectId: Snowflake | "@me",
+    webhookId: string
+  ): Promise<RotateProjectWebhookResponse> {
+    const data = await performRequest<RotateProjectWebhookResponse>({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectWebhookRotate(projectId, webhookId),
+      method: "POST",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+    if (this.#validateResponses) RotateProjectWebhookResponseSchema.parse(data);
+    return data as RotateProjectWebhookResponse;
+  }
+
+  /**
+   * - POST `/v1/projects/{project_id}/webhooks/{webhook_id}/test`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async testProjectWebhook(projectId: Snowflake | "@me", webhookId: string): Promise<void> {
+    await performRequest({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectWebhookTest(projectId, webhookId),
+      method: "POST",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+  }
+
+  /**
+   * - GET `/v1/projects/{project_id}/integrations`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async listProjectIntegrations(
+    projectId: Snowflake | "@me"
+  ): Promise<ListProjectIntegrationsResponse> {
+    const data = await performRequest<ListProjectIntegrationsResponse>({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectIntegrations(projectId),
+      method: "GET",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+    if (this.#validateResponses) ListProjectIntegrationsResponseSchema.parse(data);
+    return data as ListProjectIntegrationsResponse;
+  }
+
+  /**
+   * - PUT `/v1/projects/{project_id}/integrations/{integration_id}`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async connectProjectIntegration(
+    projectId: Snowflake | "@me",
+    integrationId: string
+  ): Promise<void> {
+    await performRequest({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectIntegration(projectId, integrationId),
+      method: "PUT",
+      headers: this.#headers(),
+      fetchImpl: this.#fetch,
+    });
+  }
+
+  /**
+   * - DELETE `/v1/projects/{project_id}/integrations/{integration_id}`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   */
+  async disconnectProjectIntegration(
+    projectId: Snowflake | "@me",
+    integrationId: string
+  ): Promise<void> {
+    await performRequest({
+      baseUrl: this.#baseUrl,
+      path: Routes.projectIntegration(projectId, integrationId),
+      method: "DELETE",
+      headers: this.#headers(),
       fetchImpl: this.#fetch,
     });
   }
