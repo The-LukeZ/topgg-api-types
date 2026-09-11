@@ -1,5 +1,11 @@
 # topgg-api-types
 
+## 2.3.0
+
+### Minor Changes
+
+- 929d88b: Add types and zod/mini validators for the project webhooks management API (list/create/delete/rotate/test) and the project integrations listing API.
+
 ## 2.2.0
 
 ### Minor Changes
