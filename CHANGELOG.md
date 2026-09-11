@@ -1,5 +1,11 @@
 # topgg-api-types
 
+## 2.3.1
+
+### Patch Changes
+
+- 624d53f: Add `Routes` helpers and `TopGGClient` methods for the project webhooks management API (list/create/delete/rotate/test) and the project integrations listing/connect/disconnect API.
+
 ## 2.3.0
 
 ### Minor Changes
