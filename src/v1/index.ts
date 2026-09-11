@@ -5,3 +5,4 @@ export type * from "./types/integrations";
 export type * from "./types/votes";
 export type * from "./types/projects";
 export type * from "./types/oauth";
+export type * from "./types/webhooks";

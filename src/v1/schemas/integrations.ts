@@ -20,7 +20,9 @@ export const IntegrationCreateDataSchema = z.object({
   /**
    * The webhook secret used to verify webhook requests from Top.gg for this connection.
    */
-  webhook_secret: z.string().check(z.regex(/^whs_[a-zA-Z0-9]+$/, "Invalid webhook secret")),
+  // TODO: verify the actual character set/length constraints on the secret - only the `whs_`
+  // prefix is confirmed, so this only checks that.
+  webhook_secret: z.string().check(z.regex(/^whs_/, "Invalid webhook secret")),
   /**
    * The project this integration is connected to.
    */
@@ -85,3 +87,43 @@ export const IntegrationDeleteWebhookPayloadSchema = WebhookPayloadBaseSchema(
   "integration.delete",
   IntegrationDeleteDataSchema
 );
+
+/**
+ * An integration available for a project, as returned by the list endpoint.
+ *
+ * - GET `/v1/projects/:project_id/integrations`
+ *
+ * @see https://docs.top.gg/api/v1/project-integrations#get-projectsproject_idintegrations
+ */
+export const ListedIntegrationSchema = z.object({
+  /**
+   * The integration's unique identifier.
+   */
+  id: z.string(),
+  /**
+   * The integration's display name.
+   */
+  name: z.string(),
+  /**
+   * Short description of what the integration does.
+   */
+  description: z.string(),
+  /**
+   * URL of the integration's icon.
+   */
+  icon_url: z.url(),
+  /**
+   * Whether the integration is currently connected to the project.
+   */
+  connected: z.boolean(),
+});
+
+/**
+ * Response schema for listing the integrations available for a project and whether each one is
+ * connected.
+ *
+ * - GET `/v1/projects/:project_id/integrations`
+ *
+ * @see https://docs.top.gg/api/v1/project-integrations#get-projectsproject_idintegrations
+ */
+export const ListProjectIntegrationsResponseSchema = z.array(ListedIntegrationSchema);

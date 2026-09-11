@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { VoteCreateWebhookPayloadSchema } from "@v1/validators";
+import {
+  CreateProjectWebhookBodySchema,
+  CreateProjectWebhookResponseSchema,
+  ListProjectIntegrationsResponseSchema,
+  VoteCreateWebhookPayloadSchema,
+} from "@v1/validators";
 
 describe("VoteCreateWebhookPayloadSchema", () => {
   it("accepts a vote.create payload with fractional-second offset timestamps", () => {
@@ -57,6 +62,62 @@ describe("VoteCreateWebhookPayloadSchema", () => {
     };
 
     const result = VoteCreateWebhookPayloadSchema.safeParse(payload);
+
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("CreateProjectWebhookBodySchema", () => {
+  it("accepts a valid label and https url", () => {
+    const result = CreateProjectWebhookBodySchema.safeParse({
+      label: "Production webhook",
+      url: "https://example.com/webhooks/topgg",
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a non-https url", () => {
+    const result = CreateProjectWebhookBodySchema.safeParse({
+      label: "Production webhook",
+      url: "http://example.com/webhooks/topgg",
+    });
+
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("CreateProjectWebhookResponseSchema", () => {
+  it("accepts a create response with a whs_-prefixed secret", () => {
+    const result = CreateProjectWebhookResponseSchema.safeParse({
+      id: "wh_123456789",
+      label: "Production webhook",
+      url: "https://example.com/webhooks/topgg",
+      secret: "whs_abcDEF123456",
+    });
+
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("ListProjectIntegrationsResponseSchema", () => {
+  it("accepts a list of integrations with mixed connection status", () => {
+    const result = ListProjectIntegrationsResponseSchema.safeParse([
+      {
+        id: "sentry",
+        name: "Sentry",
+        description: "Get vote and error alerts in Sentry.",
+        icon_url: "https://example.com/icons/sentry.png",
+        connected: true,
+      },
+      {
+        id: "discord-webhooks",
+        name: "Discord Webhooks",
+        description: "Deliver vote events to a Discord channel.",
+        icon_url: "https://example.com/icons/discord.png",
+        connected: false,
+      },
+    ]);
 
     expect(result.success).toBe(true);
   });

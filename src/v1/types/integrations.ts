@@ -71,3 +71,42 @@ export type IntegrationDeleteWebhookPayload = WebhookPayloadBase<
   "integration.delete",
   IntegrationDeleteData
 >;
+
+/**
+ * An integration available for a project, as returned by the list endpoint.
+ *
+ * - GET `/v1/projects/:project_id/integrations`
+ *
+ * @see https://docs.top.gg/api/v1/project-integrations#get-projectsproject_idintegrations
+ */
+export interface ListedIntegration {
+  /**
+   * The integration's unique identifier.
+   */
+  id: string;
+  /**
+   * The integration's display name.
+   */
+  name: string;
+  /**
+   * Short description of what the integration does.
+   */
+  description: string;
+  /**
+   * URL of the integration's icon.
+   */
+  icon_url: string;
+  /**
+   * Whether the integration is currently connected to the project.
+   */
+  connected: boolean;
+}
+
+/**
+ * Response for listing the integrations available for a project and whether each one is connected.
+ *
+ * - GET `/v1/projects/:project_id/integrations`
+ *
+ * @see https://docs.top.gg/api/v1/project-integrations#get-projectsproject_idintegrations
+ */
+export type ListProjectIntegrationsResponse = ListedIntegration[];

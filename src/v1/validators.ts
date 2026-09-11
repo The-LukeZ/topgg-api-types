@@ -6,3 +6,4 @@ export * from "./schemas/integrations";
 export * from "./schemas/votes";
 export * from "./schemas/projects";
 export * from "./schemas/oauth";
+export * from "./schemas/webhooks";
