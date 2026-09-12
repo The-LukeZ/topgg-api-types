@@ -92,7 +92,7 @@ export class TopGGClient {
     this.#token = options.token;
     this.#baseUrl = options.baseUrl ?? "https://top.gg/api/v1";
     this.#validateResponses = options.validateResponses ?? false;
-    this.#fetch = options.fetch ?? fetch;
+    this.#fetch = options.fetch ?? fetch.bind(globalThis);
   }
 
   #headers(): Record<string, string> {

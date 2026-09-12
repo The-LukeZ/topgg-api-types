@@ -69,7 +69,7 @@ export class TopGGOAuthClient {
     this.#baseUrl = options.baseUrl ?? "https://top.gg/api/v1";
     this.#authorizeBaseUrl = options.authorizeBaseUrl ?? "https://top.gg";
     this.#validateResponses = options.validateResponses ?? false;
-    this.#fetch = options.fetch ?? fetch;
+    this.#fetch = options.fetch ?? fetch.bind(globalThis);
   }
 
   /**

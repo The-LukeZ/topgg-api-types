@@ -60,7 +60,7 @@ export class TopGGLegacyClient {
     this.#token = options.token;
     this.#baseUrl = options.baseUrl ?? "https://top.gg/api";
     this.#validateResponses = options.validateResponses ?? false;
-    this.#fetch = options.fetch ?? fetch;
+    this.#fetch = options.fetch ?? fetch.bind(globalThis);
   }
 
   #headers(): Record<string, string> {
