@@ -88,17 +88,18 @@
     "docs": "node ./tooling/typedoc/node_modules/typedoc/bin/typedoc && node ./docs-site/scripts/sync-api-docs.mjs"
   },
   "devDependencies": {
-    "@changesets/cli": "^3.0.1",
-    "prettier": "3.9.6",
+    "@changesets/cli": "^3.0.3",
+    "prettier": "3.10.1",
     "prettier-plugin-svelte": "^4.1.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "tsdown": "^0.22.14",
+    "tsdown": "^0.23.7",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.11"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   },
   "dependencies": {
-    "discord-api-types": "^0.38.53",
-    "zod": "^4.4.3"
+    "discord-api-types": "^0.38.59",
+    "zod": "^4.6.7"
   },
-  "packageManager": "pnpm@11.22.0"
+  "packageManager": "pnpm@12.21.0"
 }

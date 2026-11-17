@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { docs } from "svelte-docsmith/content";
+  import { content } from "svelte-docsmith/content";
   import { DocsShell, Hero, FeatureGrid, Feature, CTA, Action } from "svelte-docsmith";
-  import { siteConfig } from "$lib/site-config";
 </script>
 
-<DocsShell config={siteConfig} content={docs} layout="page" pattern>
+<DocsShell {content} layout="page" pattern>
   <Hero
     title="topgg-api-types"
     description="TypeScript types and zod/mini runtime validators for the Top.gg API, plus optional REST, OAuth, and webhook clients."

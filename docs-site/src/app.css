@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @import "svelte-docsmith/theme.css";
-@import "svelte-docsmith/themes/bubblegum.css";
 
 aside:has(nav[aria-label="Documentation"]) {
   width: 20rem !important;
