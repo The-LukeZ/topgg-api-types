@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  BaseProjectSchema,
   CreateProjectWebhookBodySchema,
   CreateProjectWebhookResponseSchema,
+  ErrorSchema,
   ListProjectIntegrationsResponseSchema,
+  UpdateProjectBodySchema,
   VoteCreateWebhookPayloadSchema,
 } from "@v1/validators";
 
@@ -119,6 +122,65 @@ describe("ListProjectIntegrationsResponseSchema", () => {
       },
     ]);
 
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("ErrorSchema", () => {
+  // Example error response from https://docs.top.gg/api/v1/introduction
+  const unauthorized = {
+    type: "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+    title: "Unauthorized",
+    status: 401,
+    detail: "The provided token is missing or invalid.",
+    code: "UNAUTHORIZED",
+  };
+
+  it("accepts a problem+json error with a code", () => {
+    expect(ErrorSchema.safeParse(unauthorized).success).toBe(true);
+  });
+
+  it("rejects an error without a code", () => {
+    const { code: _code, ...withoutCode } = unauthorized;
+    expect(ErrorSchema.safeParse(withoutCode).success).toBe(false);
+  });
+});
+
+describe("UpdateProjectBodySchema", () => {
+  it("accepts additional_data for a Minecraft server", () => {
+    const result = UpdateProjectBodySchema.safeParse({
+      additional_data: { minecraft_server: { host: "play.example.com", port: 25565 } },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts partial minecraft_server data", () => {
+    const result = UpdateProjectBodySchema.safeParse({
+      additional_data: { minecraft_server: { port: 25565 } },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it.each([0, 65536, 25565.5])("rejects port %s", (port) => {
+    const result = UpdateProjectBodySchema.safeParse({
+      additional_data: { minecraft_server: { host: "play.example.com", port } },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects an empty body", () => {
+    expect(UpdateProjectBodySchema.safeParse({}).success).toBe(false);
+  });
+});
+
+describe("BaseProjectSchema", () => {
+  it("accepts a Minecraft game server project", () => {
+    const result = BaseProjectSchema.safeParse({
+      id: "218109768489992192",
+      platform: "minecraft",
+      platform_id: "218109768489992192",
+      type: "game_server",
+    });
     expect(result.success).toBe(true);
   });
 });

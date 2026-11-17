@@ -74,7 +74,7 @@ before they're returned:
 const client = new TopGGClient({ token, validateResponses: true });
 ```
 
-**Errors:** non-2xx responses throw `TopGGAPIError` (`status`, `type`, `title`, `detail`, and
+**Errors:** non-2xx responses throw `TopGGAPIError` (`status`, `type`, `title`, `detail`, `code`, and
 `retryAfter` when the API sends a `Retry-After` header). `getVoteStatus` is the one exception — a
 404 there resolves to `null` instead of throwing, since that's the documented "user hasn't voted"
 response.
@@ -141,6 +141,7 @@ requests yourself without pulling in the full client:
 import { Routes } from "topgg-api-types/v1/routes";
 
 Routes.project(); // "/projects/@me"
+Routes.project("218109768489992192"); // "/projects/218109768489992192"
 Routes.projectVoteStatus("1234567890"); // "/projects/@me/votes/1234567890"
 ```
 
@@ -159,11 +160,14 @@ const ok = await verifyWebhookSignature({
   rawBody,
   signatureHeader: req.headers["x-topgg-signature"],
   secret: process.env.TOPGG_WEBHOOK_SECRET!,
-  toleranceSeconds: 300, // optional replay protection
 });
 
 if (!ok) return res.status(401).end();
 ```
+
+Requests whose signature timestamp is more than 5 minutes old are rejected by default (replay
+protection). Change the window with `toleranceSeconds`, or pass `toleranceSeconds: false` to turn the
+check off.
 
 It's built on the Web Crypto API (`crypto.subtle`), so it runs unmodified in Node 19+, browsers,
 Deno, Bun, and Workers — no `node:crypto` dependency.

@@ -174,12 +174,42 @@ export interface GetVoteStatusByUserResponse {
 // # Project Management
 
 /**
- * Request body for updating the authenticated project's headline and/or page content.
- * At least one of `headline` or `page_content` must be provided.
+ * Minecraft server connection data for a project's `additional_data`.
+ * Omitted fields keep their current value.
+ */
+export interface MinecraftServerAdditionalData {
+  /**
+   * The public hostname or IP address players join with, without a port (e.g., `play.example.com`).
+   */
+  host?: string;
+  /**
+   * The port players join with.
+   *
+   * @minimum 1
+   * @maximum 65535
+   */
+  port?: number;
+}
+
+/**
+ * Platform-specific project data, with one object per platform.
+ * Only the object matching the project's platform is accepted (others return `422`).
+ */
+export interface ProjectAdditionalData {
+  /**
+   * For projects with `platform: "minecraft"` and `type: "game_server"`.
+   */
+  minecraft_server?: MinecraftServerAdditionalData;
+}
+
+/**
+ * Request body for updating a project's headline, page content, and/or platform data.
+ * At least one of `headline`, `page_content`, or `additional_data` must be provided.
  *
+ * - PATCH `/v1/projects/:project_id`
  * - PATCH `/v1/projects/@me`
  *
- * @see https://docs.top.gg/api/v1/projects#patch-projectsme
+ * @see https://docs.top.gg/api/v1/projects#patch-projectsproject_id
  */
 export interface UpdateProjectBody {
   /**
@@ -196,6 +226,14 @@ export interface UpdateProjectBody {
    * @maximum 50000
    */
   page_content?: Partial<Record<Locale, string>>;
+  /**
+   * Platform-specific data, with one object per platform. Only the object for the project's
+   * platform is accepted; sending another returns `422`. Omitted fields keep their current value.
+   *
+   * Only works with an OAuth access token on `PATCH /v1/projects/:project_id`.
+   * `PATCH /v1/projects/@me` returns `422` when this is set.
+   */
+  additional_data?: ProjectAdditionalData;
 }
 
 /**

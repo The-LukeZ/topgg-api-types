@@ -178,12 +178,39 @@ export const GetVoteStatusByUserResponseSchema = z.object({
 // ## Project Management Schemas
 
 /**
- * Request body for updating the authenticated project's headline and/or page content.
- * At least one of `headline` or `page_content` must be provided.
+ * Minecraft server connection data for a project's `additional_data`.
+ * Omitted fields keep their current value.
+ */
+export const MinecraftServerAdditionalDataSchema = z.object({
+  /**
+   * The public hostname or IP address players join with, without a port (e.g., `play.example.com`).
+   */
+  host: z.optional(z.string()),
+  /**
+   * The port players join with.
+   */
+  port: z.optional(z.int().check(z.gte(1), z.lte(65535))),
+});
+
+/**
+ * Platform-specific project data, with one object per platform.
+ * Only the object matching the project's platform is accepted (others return `422`).
+ */
+export const ProjectAdditionalDataSchema = z.object({
+  /**
+   * For projects with `platform: "minecraft"` and `type: "game_server"`.
+   */
+  minecraft_server: z.optional(MinecraftServerAdditionalDataSchema),
+});
+
+/**
+ * Request body for updating a project's headline, page content, and/or platform data.
+ * At least one of `headline`, `page_content`, or `additional_data` must be provided.
  *
+ * - PATCH `/v1/projects/:project_id`
  * - PATCH `/v1/projects/@me`
  *
- * @see https://docs.top.gg/api/v1/projects#patch-projectsme
+ * @see https://docs.top.gg/api/v1/projects#patch-projectsproject_id
  */
 export const UpdateProjectBodySchema = z
   .object({
@@ -199,11 +226,20 @@ export const UpdateProjectBodySchema = z
     page_content: z.optional(
       z.partialRecord(LocaleSchema, z.string().check(z.minLength(300), z.maxLength(50000)))
     ),
+    /**
+     * Platform-specific data, with one object per platform. Only the object for the project's
+     * platform is accepted; sending another returns `422`. Omitted fields keep their current value.
+     *
+     * Only works with an OAuth access token on `PATCH /v1/projects/:project_id`.
+     * `PATCH /v1/projects/@me` returns `422` when this is set.
+     */
+    additional_data: z.optional(ProjectAdditionalDataSchema),
   })
   .check(
     z.refine(
-      (data) => Boolean(data.headline) || Boolean(data.page_content),
-      "Either headline or page_content must be provided"
+      (data) =>
+        Boolean(data.headline) || Boolean(data.page_content) || Boolean(data.additional_data),
+      "At least one of headline, page_content, or additional_data must be provided"
     )
   );
 

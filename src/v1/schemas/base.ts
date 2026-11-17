@@ -20,13 +20,17 @@ export const IntegrationWebhookEventTypeSchema = z.enum([
  * For example, a discord bot may have a support server, but this would not make any sense for a discord server.
  *
  * You can use this to further find out the specificity of the project.
+ *
+ * - `bot` and `server`: Discord
+ * - `game`: Roblox
+ * - `game_server`: Minecraft
  */
-export const ProjectTypeSchema = z.enum(["bot", "server", "game"]);
+export const ProjectTypeSchema = z.enum(["bot", "server", "game", "game_server"]);
 
 /**
  * A Platform is used to identify where the corresponding ID links towards.
  */
-export const ProjectPlatformTypeSchema = z.enum(["discord", "roblox"]);
+export const ProjectPlatformTypeSchema = z.enum(["discord", "roblox", "minecraft"]);
 
 /**
  * A User Source is an enum that represents a user account from an external platform that is linked to a Top.gg user account.
@@ -72,10 +76,26 @@ export const LocaleSchema = z.enum([
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
  */
 export const ErrorSchema = z.object({
+  /**
+   * A URI reference identifying the problem type.
+   */
   type: z.string(),
+  /**
+   * A short, human-readable summary of the problem.
+   */
   title: z.string(),
+  /**
+   * The HTTP status code.
+   */
   status: z.number(),
+  /**
+   * A human-readable explanation of this specific occurrence.
+   */
   detail: z.string(),
+  /**
+   * A machine-readable error code (e.g., `UNAUTHORIZED`, `PROJECT_NOT_FOUND`).
+   */
+  code: z.string(),
 });
 
 /**

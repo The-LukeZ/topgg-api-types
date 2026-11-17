@@ -15,11 +15,15 @@ export interface VerifyWebhookSignatureOptions {
    */
   secret: string;
   /**
-   * If provided, requests whose `t=` timestamp is further than this many seconds from now are rejected.
-   * Omit to skip timestamp/replay checking entirely.
+   * Requests whose `t=` timestamp is further than this many seconds from now are rejected, to guard
+   * against replay attacks. Defaults to 300 (5 minutes), per Top.gg docs. Pass `false` to disable.
+   *
+   * @default 300
    */
-  toleranceSeconds?: number;
+  toleranceSeconds?: number | false;
 }
+
+const DEFAULT_TOLERANCE_SECONDS = 300;
 
 const SIGNATURE_HEADER_PATTERN = /^t=(\d+),v1=([0-9a-f]+)$/;
 
@@ -42,9 +46,10 @@ export async function verifyWebhookSignature(
   const timestampStr = match[1]!;
   const signature = match[2]!;
 
-  if (options.toleranceSeconds !== undefined) {
+  const toleranceSeconds = options.toleranceSeconds ?? DEFAULT_TOLERANCE_SECONDS;
+  if (toleranceSeconds !== false) {
     const ageSeconds = Math.abs(Date.now() / 1000 - Number(timestampStr));
-    if (ageSeconds > options.toleranceSeconds) return false;
+    if (ageSeconds > toleranceSeconds) return false;
   }
 
   const key = await crypto.subtle.importKey(

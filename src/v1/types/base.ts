@@ -16,13 +16,17 @@ export type IntegrationWebhookEventType = "integration.create" | "integration.de
  * For example, a discord bot may have a support server, but this would not make any sense for a discord server.
  *
  * You can use this to further find out the specificity of the project.
+ *
+ * - `bot` and `server`: Discord
+ * - `game`: Roblox
+ * - `game_server`: Minecraft
  */
-export type ProjectType = "bot" | "server" | "game";
+export type ProjectType = "bot" | "server" | "game" | "game_server";
 
 /**
  * A Platform is used to identify where the corresponding ID links towards.
  */
-export type ProjectPlatformType = "discord" | "roblox";
+export type ProjectPlatformType = "discord" | "roblox" | "minecraft";
 
 /**
  * A User Source is an enum that represents a user account from an external platform that is linked to a Top.gg user account.
@@ -67,10 +71,26 @@ export type Locale =
  * All error responses follow the [`application/problem+json`](https://datatracker.ietf.org/doc/html/rfc7807) specification.
  */
 export interface ErrorResponse {
+  /**
+   * A URI reference identifying the problem type.
+   */
   type: string;
+  /**
+   * A short, human-readable summary of the problem.
+   */
   title: string;
+  /**
+   * The HTTP status code.
+   */
   status: number;
+  /**
+   * A human-readable explanation of this specific occurrence.
+   */
   detail: string;
+  /**
+   * A machine-readable error code (e.g., `UNAUTHORIZED`, `PROJECT_NOT_FOUND`).
+   */
+  code: string;
 }
 
 /**

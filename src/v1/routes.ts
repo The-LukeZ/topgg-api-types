@@ -14,11 +14,14 @@ export const Routes = {
   },
   /**
    * Route for:
-   * - GET `/projects/@me`
-   * - PATCH `/projects/@me`
+   * - GET `/projects/{project.id}`
+   * - PATCH `/projects/{project.id}`
+   *
+   * `projectId` is `@me` for legacy project tokens, or the project's ID for OAuth access tokens.
+   * Defaults to `@me`.
    */
-  project() {
-    return "/projects/@me" as const;
+  project<T extends Snowflake | "@me" = "@me">(projectId: T = "@me" as T) {
+    return `/projects/${projectId}` as const;
   },
   /**
    * Route for:

@@ -134,12 +134,20 @@ export class TopGGClient {
   }
 
   /**
+   * - PATCH `/v1/projects/:project_id`
    * - PATCH `/v1/projects/@me`
+   *
+   * `projectId` is `@me` for legacy project tokens (the default), or the project's ID for OAuth
+   * access tokens. `additional_data` requires a real project ID with an OAuth access token;
+   * `@me` returns `422` when it is set.
    */
-  async updateProject(body: UpdateProjectBody): Promise<void> {
+  async updateProject(
+    body: UpdateProjectBody,
+    projectId: Snowflake | "@me" = "@me"
+  ): Promise<void> {
     await performRequest({
       baseUrl: this.#baseUrl,
-      path: Routes.project(),
+      path: Routes.project(projectId),
       method: "PATCH",
       headers: this.#headers(),
       body,

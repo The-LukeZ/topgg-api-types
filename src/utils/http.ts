@@ -19,6 +19,10 @@ export class TopGGAPIError extends Error {
    */
   detail?: string | undefined;
   /**
+   * The `code` field from the error response, if present (v1 only, e.g. `PROJECT_NOT_FOUND`).
+   */
+  code?: string | undefined;
+  /**
    * The value of the `Retry-After` response header, in seconds, if present (typically sent on 429 responses).
    */
   retryAfter?: number | undefined;
@@ -30,6 +34,7 @@ export class TopGGAPIError extends Error {
       type?: string | undefined;
       title?: string | undefined;
       detail?: string | undefined;
+      code?: string | undefined;
       retryAfter?: number | undefined;
     }
   ) {
@@ -39,6 +44,7 @@ export class TopGGAPIError extends Error {
     this.type = init.type;
     this.title = init.title;
     this.detail = init.detail;
+    this.code = init.code;
     this.retryAfter = init.retryAfter;
   }
 }
@@ -56,17 +62,21 @@ export function buildQueryString(query?: Record<string, string | number | undefi
   return serialized ? `?${serialized}` : "";
 }
 
-async function parseErrorBody(
-  res: Response
-): Promise<{ type?: string | undefined; title?: string | undefined; detail?: string | undefined }> {
+async function parseErrorBody(res: Response): Promise<{
+  type?: string | undefined;
+  title?: string | undefined;
+  detail?: string | undefined;
+  code?: string | undefined;
+}> {
   try {
     const data = await res.json();
     if (data && typeof data === "object") {
-      const { type, title, detail } = data as Record<string, unknown>;
+      const { type, title, detail, code } = data as Record<string, unknown>;
       return {
         type: typeof type === "string" ? type : undefined,
         title: typeof title === "string" ? title : undefined,
         detail: typeof detail === "string" ? detail : JSON.stringify(data),
+        code: typeof code === "string" ? code : undefined,
       };
     }
     return { detail: JSON.stringify(data) };
@@ -139,6 +149,7 @@ export async function performRequest<T>(opts: PerformRequestOptions): Promise<T 
         type: errBody.type,
         title: errBody.title,
         detail: errBody.detail,
+        code: errBody.code,
         retryAfter: retryAfterHeader ? Number(retryAfterHeader) : undefined,
       }
     );
